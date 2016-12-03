@@ -5,7 +5,7 @@
 #include <errno.h>
 #include "definition.h"
 #define STRLEN 1024
-
+//iuytfyutfcjytgcjykcvjkgtycvf
 
 typedef struct PathNode
 {
