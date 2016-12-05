@@ -4,6 +4,7 @@
 #include <errno.h>
 #include "Bfs.h"
 #include <time.h>
+#include "SCC.h"
 #define STRLEN 1024
 
 
@@ -68,7 +69,7 @@ int main(int argc,char* argv[])
 	if(!strcmp(mode, "F"))
 	{
 */
-		fp=fopen("mediumGraph.txt", "r");
+		fp=fopen("smallGraph.txt", "r");
 
 		if(fp==NULL)
 		{
@@ -94,16 +95,32 @@ int main(int argc,char* argv[])
 	}
 	fclose(fp);
 	create_cc(index, index2, buffer, buffer2);
-	print_index_array(index, index -> size);
-	//print_index_array(index2, index2 -> size);
+//	print_index_array(index, index -> size);
+//	print_buffer(buffer, buffer->size);
+
+//	print_index_array(index2, index2 -> size);
+//	print_buffer(buffer2, buffer2->size);
         /*************************************** ADD EDGES AND QUERIES ************************************************/
+
+	SCC* scc=SCC_create();
+
+	printf("Teleiwsa to SCC_create \n");
+
+	SCC_initialize(scc, index->size , index);
+
+	printf("Teleiwsa to Initialize \n");
+
+	printf("PRin ton tarjan \n");
+	tarjan(index, index2, buffer, buffer2, scc);
+	printf("Bghka apo ton Tarjan \n");
+
 
 	char str;
 
     printf("|==================================================| \n");
 	printf("You have entered the next Phase of << Edge addition >> and << Queries >> \n");
 
-	fp=fopen("workload.txt", "r");
+	fp=fopen("wor1kload.txt", "r");
 
 	if(fp==NULL)
     {

@@ -1,3 +1,6 @@
+#ifndef BFS__H__
+#define BFS__H__
+
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -57,3 +60,5 @@ int bidirectional2(int, NodeIndex*, Buffer*, int, NodeIndex*, Buffer*,int);
 int bidirectional_cc(int, NodeIndex*, Buffer*, int, NodeIndex*, Buffer*, int);
 int expand_cc(Frontier**, NodeIndex*, NodeIndex*, Buffer*, Buffer*, int);
 void create_cc(NodeIndex*, NodeIndex*, Buffer*, Buffer*);
+
+#endif

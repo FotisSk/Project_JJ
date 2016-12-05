@@ -354,3 +354,4 @@ void create_cc(NodeIndex* index1, NodeIndex* index2, Buffer* buffer1,Buffer* buf
 		}
 	}
 }
+
