@@ -36,6 +36,7 @@ void IndexArrayInit(NodeIndex* ptr,int size)
            	index_array[i].offset = -1;
            	index_array[i].tail = -1;
 			index_array[i].visited = -1;
+			index_array[i].tarjanvisited = -1;
 			index_array[i].cc = -1;
         }
         ptr->index_array = index_array;
@@ -65,7 +66,7 @@ void BufferArrayInit(Buffer* ptr,int size)
             }
 */ 
           buffer_array[i].nextListNode=-1;
-            buffer_array[i].emptyNeighborPos = 0;
+          buffer_array[i].emptyNeighborPos = 0;
         }
 	ptr->size=size;
     ptr->buffer_array = buffer_array;

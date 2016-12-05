@@ -1,3 +1,6 @@
+#ifndef SCC__H__
+#define SCC__H__
+
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,6 +11,7 @@
 #define STRLEN 1024
 #define N 15
 #define HASH 200
+#define FRONTLEN 100
 
 typedef struct Component
 {
@@ -19,17 +23,39 @@ typedef struct Component
 typedef struct SCC
 {
 	Component* components; // Components index - a vector which stores the components information
+	int size;
 	uint32_t components_count;
 	uint32_t *id_belongs_to_component;	//inverted index
 }SCC;
+
+typedef struct Front
+{
+	int* front_array;
+//	int size;
+	int last;
+}Front;
+
+typedef struct Stack
+{
+	int* stack_array;
+//	int size;
+	int current;
+	int last;
+}Stack;
+
 
 typedef struct ComponentCursor
 {
 	Component* component_ptr; // pointer to current’s iteration component. Any other necessary information in order to move to next component in the vector
 }ComponentCursor;
 
-
+Front* front_create();
+Stack* stack_create();
 SCC* estimateStronglyConnectedComponents(NodeIndex* );
 int findNodeStronglyConnectedComponentID(SCC* , uint32_t );
 bool next_StronglyConnectedComponentID(SCC* , ComponentCursor* );
 int estimateShortestPathStronglyConnectedComponents(SCC* , NodeIndex* , uint32_t , uint32_t );
+SCC* SCC_create();
+void SCC_initialize(SCC* , int , NodeIndex* );
+void tarjan(NodeIndex*, NodeIndex* , Buffer* , Buffer* ,SCC*);
+#endif
