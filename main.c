@@ -69,7 +69,7 @@ int main(int argc,char* argv[])
 	if(!strcmp(mode, "F"))
 	{
 */
-		fp=fopen("smallGraph.txt", "r");
+		fp=fopen("mediumGraph.txt", "r");
 
 		if(fp==NULL)
 		{
@@ -94,7 +94,10 @@ int main(int argc,char* argv[])
 //		}											//T+_+T
 	}
 	fclose(fp);
-	create_cc(index, index2, buffer, buffer2);
+
+	int cc=0;
+	create_cc(index, index2, buffer, buffer2,&cc);
+	printf("Final CC is | %d | \n", cc) ;
 //	print_index_array(index, index -> size);
 //	print_buffer(buffer, buffer->size);
 
@@ -120,7 +123,7 @@ int main(int argc,char* argv[])
     printf("|==================================================| \n");
 	printf("You have entered the next Phase of << Edge addition >> and << Queries >> \n");
 
-	fp=fopen("wor1kload.txt", "r");
+	fp=fopen("workload.txt", "r");
 
 	if(fp==NULL)
     {
@@ -128,21 +131,36 @@ int main(int argc,char* argv[])
         exit (1);
     }
 	int selection;
+	
+/* DHMIOURGW TO PINAKAKI HELLO */
+	QueryComp* ptr;
+	ptr=edge_table(ptr);
+
+	//printf("Paw na printarw to table \n");
+//	print_edge_table(ptr);
+	//printf("Telos me to print tou table chill \n");
+
+
 	while(1)
 	{
 				selection=fscanf(fp,"%c       %d      %d\n",&ch,&node1, &node2);
 
 				if ( ch=='F')
 				{
+					continue;
 					clock_t end=clock();
                     double time_spent=(double)(end-begin);
                     printf("Program Duration: %f \n",(time_spent/CLOCKS_PER_SEC) );
-
-					continue;
-
 				}
 				if (ch=='B')
+				{
+					clock_t end=clock();
+                    double time_spent=(double)(end-begin);
+                    printf("Program Duration: %f \n",(time_spent/CLOCKS_PER_SEC) );
+				//	print_edge_table(ptr);
+				//	printf("The CC | %d | \n",cc );
 					return 1;
+				}
 
 				if (selection != 3)
                 {
@@ -160,7 +178,6 @@ int main(int argc,char* argv[])
 
 				if ( ch=='A')
 				{
-				//	printf("Mphka sto add. \n");
 					if( ( node1 < 0 ) || ( node2 < 0 ) )
 					{
 						printf("Negative nodes not accepted.\n");
@@ -170,9 +187,13 @@ int main(int argc,char* argv[])
 
 					insertNode( index , buffer, node1, node2);
 					insertNode( index2 , buffer2, node2, node1);
+					//printf("Node1:| %d | Node2: | %d | \n",node1,node2);
+					weekly(node1, node2, index, index2,  &cc, ptr);
+
 				}
 				else if (ch=='Q')
 				{
+					continue;
 				//	printf("Mphka sthn BFS. \n");
 					if( ( node1 < 0)||( node2 < 0 ) )
 					{

@@ -59,6 +59,6 @@ int bidirectional2(int, NodeIndex*, Buffer*, int, NodeIndex*, Buffer*,int);
 //int expand_cc(Frontier**, Frontier**, Frontier**, int, NodeIndex*, Buffer*, int);
 int bidirectional_cc(int, NodeIndex*, Buffer*, int, NodeIndex*, Buffer*, int);
 int expand_cc(Frontier**, NodeIndex*, NodeIndex*, Buffer*, Buffer*, int);
-void create_cc(NodeIndex*, NodeIndex*, Buffer*, Buffer*);
+void create_cc(NodeIndex*, NodeIndex*, Buffer*, Buffer*,int*);
 
 #endif

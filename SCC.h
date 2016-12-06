@@ -10,8 +10,14 @@
 #include "definition.h"
 #define STRLEN 1024
 #define N 15
-#define HASH 200
-#define FRONTLEN 100
+#define HASH 200	
+
+typedef struct QueryComp
+{
+	int** table;
+	int size;
+	int current;
+}QueryComp;
 
 typedef struct Component
 {
@@ -31,14 +37,14 @@ typedef struct SCC
 typedef struct Front
 {
 	int* front_array;
-//	int size;
+	int size;
 	int last;
 }Front;
 
 typedef struct Stack
 {
 	int* stack_array;
-//	int size;
+	int size;
 	int current;
 	int last;
 }Stack;
@@ -57,5 +63,16 @@ bool next_StronglyConnectedComponentID(SCC* , ComponentCursor* );
 int estimateShortestPathStronglyConnectedComponents(SCC* , NodeIndex* , uint32_t , uint32_t );
 SCC* SCC_create();
 void SCC_initialize(SCC* , int , NodeIndex* );
+
 void tarjan(NodeIndex*, NodeIndex* , Buffer* , Buffer* ,SCC*);
+
+void push_frontier_tarjan(int , Front* );
+int pop_frontier_tarjan(Front*);
+int expand_tarjan(int ,Front*,NodeIndex*, Buffer*);
+
+QueryComp* edge_table(QueryComp*);
+void add_comp_edge(int , int , QueryComp* );
+void weekly(int , int , NodeIndex* , NodeIndex*,int* , QueryComp* );
+void print_edge_table(QueryComp*);
+
 #endif

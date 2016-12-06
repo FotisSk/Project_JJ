@@ -337,9 +337,9 @@ int expand_cc(Frontier** main_frontier,NodeIndex* index, NodeIndex* index2, Buff
 
 
 
-void create_cc(NodeIndex* index1, NodeIndex* index2, Buffer* buffer1,Buffer* buffer2) {
+void create_cc(NodeIndex* index1, NodeIndex* index2, Buffer* buffer1,Buffer* buffer2,int* cc) {
 	int i;
-	int cc = 0;
+//	int cc = 0;
 	Frontier* main_frontier;
 	Frontier* secondary_frontier;
 	main_frontier = frontier_init();
@@ -347,10 +347,13 @@ void create_cc(NodeIndex* index1, NodeIndex* index2, Buffer* buffer1,Buffer* buf
 	for (i = 0; i < index1->size; i++) {
 		if (index1->index_array[i].cc == -1 && index1 -> index_array[i].offset != -1)
 		{
+			
 			push_frontier(i, main_frontier);
-			expand_cc(&main_frontier,index1,index2,buffer1,buffer2,cc);
+		
+			expand_cc(&main_frontier,index1,index2,buffer1,buffer2, (*cc) );
+	
 			fake_init(main_frontier);
-			cc++;
+			(*cc)++;
 		}
 	}
 }

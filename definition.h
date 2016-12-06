@@ -20,8 +20,11 @@ typedef struct indexStruct
 	int offset;
 	int tail;
 	int cc;
-	int visited;//episkepsi//////////
+	int visited;
+//Tarjan
 	int tarjanvisited;
+	int lowlink;
+	int index;
 	
 }indexStruct;
 
