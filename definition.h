@@ -25,6 +25,8 @@ typedef struct indexStruct
 	int tarjanvisited;
 	int lowlink;
 	int index;
+	int inFrontier;
+	int inStack;
 	
 }indexStruct;
 

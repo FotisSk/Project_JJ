@@ -9,6 +9,8 @@
 #define FRONTLEN 5
 #define EDGELEN 3
 
+/*****************************************************************************************/
+/******************************** CREATE AND INITIALIZE **********************************/
 SCC* SCC_create()
 {
 	SCC* scc;
@@ -51,7 +53,7 @@ Front* front_create()
 Stack* stack_create()
 {
 	Stack* stack;
-	stack = malloc( sizeof(Front) );
+	stack = malloc( sizeof(Stack) );
 	stack->stack_array=malloc( FRONTLEN*sizeof(int) );
 	stack->size=FRONTLEN;
 	stack->last=-1;
@@ -59,7 +61,10 @@ Stack* stack_create()
 	return stack;
 }
 
-void push_frontier_tarjan(int node, Front* frontier)
+
+/*****************************************************************************************/
+/************************************** FRONTIER *****************************************/
+void push_frontier_tarjan(int node, Front* frontier, NodeIndex *index)
 {
 	if ((frontier->last+1) < frontier->size) 
 	{
@@ -74,10 +79,11 @@ void push_frontier_tarjan(int node, Front* frontier)
 		frontier->last++;
 		frontier->front_array[frontier->last]=node;
 	}
+	index -> index_array[node].inFrontier = 1;
 }
 
 
-int pop_frontier_tarjan(Front* frontier) 
+int pop_frontier_tarjan(Front* frontier, NodeIndex* index) 
 {
 
 	if ( frontier->last == -1 ) 
@@ -87,8 +93,47 @@ int pop_frontier_tarjan(Front* frontier)
 	}
 	else 
 	{
+		index -> index_array[frontier -> front_array[frontier->last]].inFrontier = 0;
 		frontier->last --;	
 		return frontier->front_array[ (frontier->last) +1];
+	}
+
+}
+
+
+/*****************************************************************************************/
+/*************************************** STACK *******************************************/
+void push_stack_tarjan(int node, Stack* stack, NodeIndex* index)
+{
+	if ((stack->last+1) < (stack->size) ) 
+	{
+		stack->last++;
+		stack->stack_array[stack->last]=node;
+
+	}
+	else 
+	{
+		stack->size = stack->size * 2;
+		stack->stack_array = realloc(stack->stack_array, stack->size * sizeof(int));
+		stack->last++;
+		stack->stack_array[stack->last]=node;
+	}
+	index -> index_array[node].inStack = 1;
+}
+
+
+int pop_stack_tarjan(Stack* stack, NodeIndex* index) 
+{
+	if ( stack->last == -1 ) 
+	{
+		printf("Adeia lista manmu \n");
+		return -1;
+	}
+	else 
+	{
+		index -> index_array[stack->stack_array[ stack->last ]].inStack = 0;
+		stack->last --;	
+		return stack->stack_array[ (stack->last) + 1 ];
 	}
 }
 
@@ -100,6 +145,7 @@ int expand_tarjan(int node,Front* frontier,NodeIndex* index, Buffer* buffer)
 	list_node* buffer_array=buffer->buffer_array;
 	int offset=index_array[node].offset;
 	nextNode=buffer_array[offset].nextListNode;
+
 	while( nextNode != -1 )
 	{
 		for(i=0 ; i < buffer_array[offset].emptyNeighborPos ; i++ )
@@ -111,7 +157,7 @@ int expand_tarjan(int node,Front* frontier,NodeIndex* index, Buffer* buffer)
 			else
 			{
 				expandedNodes++;
-				push_frontier_tarjan(neighbor ,frontier);
+				push_frontier_tarjan(neighbor ,frontier, index);
 			}
 		}
 		offset=nextNode;
@@ -127,7 +173,7 @@ int expand_tarjan(int node,Front* frontier,NodeIndex* index, Buffer* buffer)
 		else
 		{
 			expandedNodes++ ;
-			push_frontier_tarjan(neighbor ,frontier);
+			push_frontier_tarjan(neighbor ,frontier, index);
 
 		}
 	}
@@ -135,40 +181,6 @@ int expand_tarjan(int node,Front* frontier,NodeIndex* index, Buffer* buffer)
 	return expandedNodes;
 
 }
-
-
-void push_stack_tarjan(int node, Stack* stack)
-{
-	if ((stack->last+1) < (stack->size) ) 
-	{
-		stack->last++;
-		stack->stack_array[stack->last]=node;
-
-	}
-	else 
-	{
-		stack->size = stack->size * 2;
-		stack->stack_array = realloc(stack->stack_array, stack->size * sizeof(int));
-		stack->last++;
-		stack->stack_array[stack->last]=node;
-	}
-}
-
-
-int pop_stack_tarjan(Stack* stack) 
-{
-	if ( stack->last == -1 ) 
-	{
-		printf("Adeia lista manmu \n");
-		return -1;
-	}
-	else 
-	{
-		stack->last --;	
-		return stack->stack_array[ (stack->last) + 1 ];
-	}
-}
-
 
 void tarjan(NodeIndex* index, NodeIndex* index2, Buffer* buffer, Buffer* buffer2,SCC* scc)
 {
@@ -179,7 +191,7 @@ void tarjan(NodeIndex* index, NodeIndex* index2, Buffer* buffer, Buffer* buffer2
 
 	int Index=1;
 	int i=0;
-	int offset,offset2,comp_count;
+	int offset,offset2,comp_count, node, expandedNodes;
 //	comp_count=scc->components_count;
 //	int size=index_array->size;
 	Front* frontier=front_create();
@@ -206,47 +218,78 @@ void tarjan(NodeIndex* index, NodeIndex* index2, Buffer* buffer, Buffer* buffer2
 		// printf("Geitones tou %d : %d \n",i,buffer_array[offset].emptyNeighborPos);
 		else if( (offset==-1) && (offset2 != -1) )
 		{
-			if(scc->components_count==scc->size)
-			{
-				scc->size=2*scc->size;
-				scc->components=realloc(scc->components,scc->size);
-				if(scc->components==NULL)
-				{
-					printf("Null realloc \n");
-					return ;
-				}
-			}
-		//	printf("O %d den exei geitones.Einai sunistwsa monh ths!\n",i);
-			scc->components[comp_count].component_id=comp_count;
-			scc->components[comp_count].included_nodes_count=1;
-			scc->components[comp_count].included_node_ids=malloc( sizeof(int) );
-			if(scc->components[comp_count].included_node_ids==NULL)
-			{
-			
-			//	printf("Gia ton poutso PC sxolhs \n");
-				return ;
-			}
-			scc->components[comp_count].included_node_ids[0]=i;
 
-			scc->id_belongs_to_component[i]=comp_count;	 		
-			scc->components_count++;
-
+			SCC_update_solo(scc, i);
 			index_array[i].tarjanvisited=1;
 
 		}
-		else if ( offset!=-1 )
+		else if ( offset != -1 )
 		{
+			//continue;
+			//printf("Ulopoieitai tora\n");
+			push_frontier_tarjan(i,frontier, index);
+			while( frontier -> last != -1 )
+			{
+				if( frontier -> last ==  -1)
+				{
+					printf("Frontier is Empty. Something went wrong.\n");
+					return;
+				}
+				node = pop_frontier_tarjan(frontier, index);
+				if( index_array[node].lowlink == -1 || index_array[node].index == -1 )
+				{
+					index_array[node].lowlink = Index;
+					index_array[node].index = Index;
+					Index++;
+				}
+				expandedNodes = expand_tarjan(node, frontier, index, buffer);
+				push_stack_tarjan(node, stack, index);
 
+				if( expandedNodes == 0 )
+				{
+					printf("O komvos | %d | einai monos tou isxira sinektiki sinistosa\n", node);
+					pop_stack_tarjan(stack, index);
+					SCC_update_solo(scc, node);
 
-			push_frontier_tarjan(i,frontier);
-			expand_tarjan(i,frontier,index, buffer);
-			push_stack_tarjan(i,stack);
-
+				}
+			}
 		}
-
 	}
 	return;
 }
+
+void SCC_update_solo(SCC *scc, int node)
+{
+	int comp_count;
+
+	comp_count = scc->components_count;
+	if(comp_count == scc->size)
+	{
+		scc->size=2*scc->size;
+		scc->components=realloc(scc->components,scc->size);
+		if(scc->components==NULL)
+		{
+			printf("Null realloc \n");
+			return ;
+		}
+	}
+//	printf("O %d den exei geitones.Einai sunistwsa monh ths!\n",i);
+	scc->components[comp_count].component_id = comp_count;
+	scc->components[comp_count].included_nodes_count = 1;
+	scc->components[comp_count].included_node_ids = malloc( sizeof(int) );
+	if(scc->components[comp_count].included_node_ids == NULL)
+	{
+		//	printf("Gia ton poutso PC sxolhs \n");
+		return ;
+	}
+	scc->components[comp_count].included_node_ids[0] = node;
+
+	scc->id_belongs_to_component[node]=comp_count;	 		
+	scc->components_count++;
+}
+
+
+
 
 QueryComp* edge_table(QueryComp* ptr)
 {
