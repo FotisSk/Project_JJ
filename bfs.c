@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <time.h>
 #define STRLEN 1024
 
 
@@ -114,12 +115,19 @@ int check_frontier(int node, Frontier* frontier)//elegxos an iparxei sto frontie
 	return 0;
 }
 
-int expand2(Frontier** main_frontier, Frontier** secondary_frontier, Frontier** main_frontier2, int target, NodeIndex* index, Buffer* buffer,int cycle) {
+int expand2(Frontier** main_frontier, Frontier** secondary_frontier, Frontier** main_frontier2, int target, NodeIndex* index, NodeIndex* index2, Buffer* buffer,int cycle,int no_bfs) {
 	int offset;
 	int i = 0;
 	int node;
+	int temp=0;
 	int flag = 0;
 	Frontier* new_frontier;
+	clock_t end, start,end2,start2;
+	double time_spent;
+	double time_spent2;
+	int frontier_size;
+	//start2 = clock();
+	frontier_size = 0;
 	while (1)
 	{
 		node = pop_frontier(*main_frontier);
@@ -128,20 +136,26 @@ int expand2(Frontier** main_frontier, Frontier** secondary_frontier, Frontier** 
 			new_frontier = *main_frontier;
 			*main_frontier = *secondary_frontier;
 			*secondary_frontier = new_frontier;
-			return 0;
+			//end2 = clock();
+			//time_spent = (double)(end - start);
+			//time_spent2 = (double)(end2 - start2);
+			return frontier_size;
 		}
 		if (node == -1 && flag == 0)
 		{
+			//start = clock();
+			//end2 = clock();
+			//end = clock();
+			//time_spent = (double)(end - start);
+			//time_spent2 = (double)(end2 - start2);
 			return -1;
 		}
 		flag = 1;
 		if (index->index_array[node].visited!=cycle) {//elegxos an einai visited se afto to kiklo tis bfs
 			//visited_push(node, visited);
 			index->index_array[node].visited = cycle;
-			if (target == node || check_frontier(node,(*main_frontier2)))
-			{
-				return 1;
-			}
+			//start = clock();
+			//end = clock();
 			if (node < index->size)
 			{//an den exei geitones kanei anadromi me neo pop
 				offset = index->index_array[node].offset;
@@ -150,11 +164,20 @@ int expand2(Frontier** main_frontier, Frontier** secondary_frontier, Frontier** 
 				{
 					while ((buffer->buffer_array[offset].emptyNeighborPos) > i)
 					{//sarwsi geitonwn
-						if (target == buffer->buffer_array[offset].neighbor[i])
+						temp = buffer->buffer_array[offset].neighbor[i];
+						if (temp==target)
 						{
-							return 1;
+							return -2;
 						}
-						push_frontier(buffer->buffer_array[offset].neighbor[i], *secondary_frontier);
+						if (no_bfs == 1 && index2->index_array[temp].bfs[0] == cycle) {
+								return -2;
+							}
+						if (no_bfs == 0 && index2->index_array[temp].bfs[1] == cycle) {
+							return -2;
+						}
+						push_frontier(temp, *secondary_frontier);
+						index->index_array[temp].bfs[no_bfs] = cycle;
+						frontier_size++;
 						i++;
 					}
 					offset = buffer->buffer_array[offset].nextListNode;
@@ -165,122 +188,81 @@ int expand2(Frontier** main_frontier, Frontier** secondary_frontier, Frontier** 
 	}
 }
 
-int bidirectional2(int target1, NodeIndex* index, Buffer* buffer, int target2, NodeIndex* index2, Buffer* buffer2,int cycle) {
+int bidirectional2(Frontier** main_frontier1,Frontier** main_frontier2,Frontier** temp_frontier,int target1, NodeIndex* index, Buffer* buffer, int target2, NodeIndex* index2, Buffer* buffer2,int cycle) {
 	int i = 0;
 	int flag = 0;
-	int temp;
-	Frontier* main_frontier1;
-	Frontier* main_frontier2;
-	Frontier* temp_frontier;
-	main_frontier1 = frontier_init();
-	main_frontier2 = frontier_init();
-	temp_frontier = frontier_init();
-	push_frontier(target2, main_frontier1);
-	push_frontier(target1, main_frontier2);
+	int temp = 1;
+	int	temp2=1;
+	fake_init(*main_frontier1);
+	fake_init(*main_frontier2);
+	fake_init(*temp_frontier);
+	push_frontier(target2, *main_frontier1);
+	push_frontier(target1, *main_frontier2);
 	while (1) {
-		temp = expand2(&main_frontier1, &temp_frontier, &main_frontier2, target1, index, buffer,cycle);
-		fake_init(temp_frontier);
-		if (temp == 1)
+		temp = expand2(main_frontier1, temp_frontier, main_frontier2, target1, index,index2, buffer,cycle,0);
+		fake_init(*temp_frontier);
+		if (temp == -2)
 		{
 			return i;
 		}
 		else if (temp == -1)
 		{
-			if (flag == -1) {
-				return -1;
-			}
-			else {
-				flag = -1;
-			}
+			return -1;
 
 		}
 		else if (temp == 0) {
 			flag = 0;
 			i++;
 		}
-		temp = expand2(&main_frontier2, &temp_frontier, &main_frontier1, target2, index2, buffer2,cycle);
-		fake_init(temp_frontier);
-		if (temp == 1)
+		while (temp<temp2)
+		{
+			temp = expand2(main_frontier1, temp_frontier, main_frontier2, target1, index, index2, buffer, cycle, 0);
+			if (temp == -2)
+			{
+				return i;
+			}
+			else if (temp == -1)
+			{
+				return -1;
+
+			}
+			else {
+				i++;
+			}
+		}
+		temp2 = expand2(main_frontier2, temp_frontier, main_frontier1, target2, index2,index, buffer2,cycle,1);
+		fake_init(*temp_frontier);
+		if (temp2 == -2)
 		{
 			return i;
 		}
-		else if (temp == -1)
+		else if (temp2 == -1)
 		{
-			if (flag == -1) {
-				return -1;
-			}
-			else {
-				flag = -1;
-			}
+			return -1;
 
 		}
-		else if (temp == 0) {
+		else if (temp2 == 0) {
 			flag = 0;
 			i++;
+		}
+		while(temp2<temp)
+		{
+			temp2 = expand2(main_frontier2, temp_frontier, main_frontier1, target2, index2, index, buffer2, cycle, 1);
+			if (temp2 == -2)
+			{
+				return i;
+			}
+			else if (temp2 == -1)
+			{
+				return -1;
+
+			}
+			else {
+				i++;
+			}
 		}
 	}
 }
-
-
-
-
-int bidirectional_cc(int target1, NodeIndex* index, Buffer* buffer, int target2, NodeIndex* index2, Buffer* buffer2,int cycle) {
-	int i = 0;
-	int flag = 0;
-	int temp;
-	Frontier* main_frontier1;
-	Frontier* main_frontier2;
-	Frontier* temp_frontier;
-	main_frontier1 = frontier_init();
-	main_frontier2 = frontier_init();
-	temp_frontier = frontier_init();
-	push_frontier(target2, main_frontier1);
-	push_frontier(target1, main_frontier2);
-	while (1) {
-		temp = expand2(&main_frontier1, &temp_frontier, &main_frontier2, -1, index, buffer,cycle);
-		fake_init(temp_frontier);
-		if (temp == 1)
-		{
-			return i;
-		}
-		else if (temp == -1)
-		{
-			if (flag == -1) {
-				return -1;
-			}
-			else {
-				flag = -1;
-			}
-
-		}
-		else if (temp == 0) {
-			flag = 0;
-			i++;
-		}
-		temp = expand2(&main_frontier2, &temp_frontier, &main_frontier1, -1, index2, buffer2,cycle);
-		fake_init(temp_frontier);
-		if (temp == 1)
-		{
-			return i;
-		}
-		else if (temp == -1)
-		{
-			if (flag == -1) {
-				return -1;
-			}
-			else {
-				flag = -1;
-			}
-
-		}
-		else if (temp == 0) {
-			flag = 0;
-			i++;
-		}
-	}
-}
-
-
 
 
 int expand_cc(Frontier** main_frontier,NodeIndex* index, NodeIndex* index2, Buffer* buffer, Buffer* buffer2, int cycle) {
@@ -299,7 +281,12 @@ int expand_cc(Frontier** main_frontier,NodeIndex* index, NodeIndex* index2, Buff
 		flag = 1;
 		if (index->index_array[node].cc == -1) {//elegxos an einai visited se afto to kiklo tis bfs
 														//visited_push(node, visited)
-			index->index_array[node].cc = cycle;
+			if (node < index->size) {
+				index->index_array[node].cc = cycle;
+			}
+			if (node < index2->size) {
+				index2->index_array[node].cc = cycle;
+			}
 			if (node < index->size)
 			{//an den exei geitones kanei anadromi me neo pop
 				offset = index->index_array[node].offset;
@@ -337,9 +324,9 @@ int expand_cc(Frontier** main_frontier,NodeIndex* index, NodeIndex* index2, Buff
 
 
 
-void create_cc(NodeIndex* index1, NodeIndex* index2, Buffer* buffer1,Buffer* buffer2) {
+void create_cc(NodeIndex* index1, NodeIndex* index2, Buffer* buffer1,Buffer* buffer2,int* cc) {
 	int i;
-	int cc = 0;
+//	int cc = 0;
 	Frontier* main_frontier;
 	Frontier* secondary_frontier;
 	main_frontier = frontier_init();
@@ -347,19 +334,14 @@ void create_cc(NodeIndex* index1, NodeIndex* index2, Buffer* buffer1,Buffer* buf
 	for (i = 0; i < index1->size; i++) {
 		if (index1->index_array[i].cc == -1 && index1 -> index_array[i].offset != -1)
 		{
+			
 			push_frontier(i, main_frontier);
-			expand_cc(&main_frontier,index1,index2,buffer1,buffer2,cc);
+		
+			expand_cc(&main_frontier,index1,index2,buffer1,buffer2, (*cc) );
+	
 			fake_init(main_frontier);
-			cc++;
+			(*cc)++;
 		}
 	}
 }
 
-
-
-
-
-int tarjan()
-{
-	
-}

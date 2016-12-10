@@ -1,3 +1,6 @@
+#ifndef DEFINITION__H__
+#define DEFINITION__H__
+
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,7 +20,12 @@ typedef struct indexStruct
 	int offset;
 	int tail;
 	int cc;
-	int visited;//episkepsi//////////
+	int visited;
+	int bfs[2];
+//Tarjan
+	int tarjanvisited;
+	int lowlink;
+	int index;
 	
 }indexStruct;
 
@@ -89,5 +97,5 @@ int testInput();
 
 int testMemory(Buffer* , Buffer*, NodeIndex*,  NodeIndex*);
 
-
+#endif
 

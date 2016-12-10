@@ -4,6 +4,7 @@
 #include <errno.h>
 #include "Bfs.h"
 #include <time.h>
+#include "SCC.h"
 #define STRLEN 1024
 
 
@@ -37,8 +38,12 @@ int main(int argc,char* argv[])
 
 //////////////////////////////////////////////////////////////////////////////////
 
-	Frontier* frontier;
+	Frontier* frontier1;
 	Frontier* frontier2;
+	Frontier* frontier3;
+	frontier1 = frontier_init();
+ 	frontier2 = frontier_init();
+ 	frontier3 = frontier_init();
 	int cycle = 0;//kiklos tis bfs
 	int flag = 0;
 
@@ -93,10 +98,26 @@ int main(int argc,char* argv[])
 //		}											//T+_+T
 	}
 	fclose(fp);
-	create_cc(index, index2, buffer, buffer2);
-	print_index_array(index, index -> size);
-	//print_index_array(index2, index2 -> size);
+
+	int cc=0;
+	create_cc(index, index2, buffer, buffer2,&cc);
+	printf("Final CC is | %d | \n", cc) ;
+//	print_index_array(index, index -> size);
+//	print_buffer(buffer, buffer->size);
+
+//	print_index_array(index2, index2 -> size);
+//	print_buffer(buffer2, buffer2->size);
         /*************************************** ADD EDGES AND QUERIES ************************************************/
+
+	SCC* scc=SCC_create();
+
+	printf("Teleiwsa to SCC_create \n");
+
+	SCC_initialize(scc, index->size , index);
+
+	//printf("PRin ton tarjan \n");
+	tarjan(index, index2, buffer, buffer2, scc);
+//	printf("Bghka apo ton Tarjan \n");
 
 	char str;
 
@@ -111,77 +132,65 @@ int main(int argc,char* argv[])
         exit (1);
     }
 	int selection;
+	
+/* DHMIOURGW TO PINAKAKI HELLO */
+	QueryComp* ptr;
+	ptr=edge_table();
+
 	while(1)
 	{
-				selection=fscanf(fp,"%c       %d      %d\n",&ch,&node1, &node2);
-
-				if ( ch=='F')
+			selection=fscanf(fp,"%c       %d      %d\n",&ch,&node1, &node2);
+			if ( ch=='F')
+			{
+					
+                   // double time_spent=(double)(end-begin);
+                  //  printf("Program Duration: %f \n",(time_spent/CLOCKS_PER_SEC) );
+				continue;
+			}
+			if (ch=='B')
+			{
+				clock_t end=clock();
+                double time_spent=(double)(end-begin);
+                printf("Program Duration: %f \n",(time_spent/CLOCKS_PER_SEC) );
+                delete_structure(index,buffer);
+                delete_structure(index2,buffer2);
+				return 1;
+			}
+			if ( ch=='A')
+			{
+				if( ( node1 < 0 ) || ( node2 < 0 ) )
 				{
-					clock_t end=clock();
-                    double time_spent=(double)(end-begin);
-                    printf("Program Duration: %f \n",(time_spent/CLOCKS_PER_SEC) );
-
+					printf("Negative nodes not accepted.\n");
+					printf("|==================================================| \n");
 					continue;
-
 				}
-				if (ch=='B')
-					return 1;
-
-				if (selection != 3)
-                {
-
-                    printf("First phase has ended! \n");
-                    delete_structure(index,buffer);
-                    delete_structure(index2,buffer2);
-//					clock_t end=clock();
-//                  double time_spent=(double)(end-begin);
-//                  printf("Program Duration: %f \n",(time_spent/CLOCKS_PER_SEC) );
-                     return 1;
-                }
-
-//				printf("Option: |%c| - Node1: |%d| - Node2: |%d|. \n",ch,node1,node2);
-
-				if ( ch=='A')
+				insertNode( index , buffer, node1, node2);
+				insertNode( index2 , buffer2, node2, node1);
+			}
+			else if (ch=='Q')
+			{
+				if( ( node1 < 0)||( node2 < 0 ) )
 				{
-				//	printf("Mphka sto add. \n");
-					if( ( node1 < 0 ) || ( node2 < 0 ) )
-					{
-						printf("Negative nodes not accepted.\n");
-						printf("|==================================================| \n");
-						continue;
-					}
-
-					insertNode( index , buffer, node1, node2);
-					insertNode( index2 , buffer2, node2, node1);
+					printf("Negative nodes not accepted.\n");
+					printf("|==================================================| \n");
+					continue;
 				}
-				else if (ch=='Q')
+				if(  (node1 > (index->size - 1) ) || (node2 > (index2->size-1)) )
 				{
-				//	printf("Mphka sthn BFS. \n");
-					if( ( node1 < 0)||( node2 < 0 ) )
-					{
-						printf("Negative nodes not accepted.\n");
-						printf("|==================================================| \n");
-						continue;
-					}
-
-					if(  (node1 > (index->size - 1) ) || (node2 > (index2->size-1)) )
-					{
-						printf("Node1 or Node2 given exceeds the index_array size.. \n");
-						continue;
-					}
-					flag = bidirectional2(node2, index, buffer, node1, index2, buffer2, cycle);
-					cycle++;
+					printf("Node1 or Node2 given exceeds the index_array size.. \n");
+					continue;
 				}
-				else
-					printf("Wrong command given! Try again.. \n");
-
+				flag = bidirectional2(&frontier1,&frontier2,&frontier3,node2, index, buffer, node1, index2, buffer2, cycle);
+				cycle++;
+			}
+			else
+				printf("Wrong command given! Try again.. \n");
 				//printf("|==================================================| \n");
 
 	}
 	printf("|==================================================| \n");
 
 }
-
 
 /*
 	else if( !strcmp(str2, "U") )
