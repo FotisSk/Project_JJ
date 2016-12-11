@@ -69,7 +69,7 @@ int main(int argc,char* argv[])
 	if(!strcmp(mode, "F"))
 	{
 */
-		fp=fopen("mediumGraph.txt", "r");
+		fp=fopen("ccTest.txt", "r");
 
 		if(fp==NULL)
 		{

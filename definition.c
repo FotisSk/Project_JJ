@@ -38,9 +38,13 @@ void IndexArrayInit(NodeIndex* ptr,int size)
 			index_array[i].visited = -1;
 			index_array[i].tarjanvisited = -1;
 			index_array[i].cc = -1;
+			index_array[i].lowlink = -1;
+			index_array[i].index = -1;
+			index_array[i].inFrontier = 0;
+			index_array[i].inStack = 0;
         }
         ptr->index_array = index_array;
-	ptr->size=size;
+		ptr->size=size;
 }
 
 void BufferArrayInit(Buffer* ptr,int size)

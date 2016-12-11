@@ -66,9 +66,14 @@ void SCC_initialize(SCC* , int , NodeIndex* );
 
 void tarjan(NodeIndex*, NodeIndex* , Buffer* , Buffer* ,SCC*);
 
-void push_frontier_tarjan(int , Front* );
-int pop_frontier_tarjan(Front*);
+void push_stack_tarjan(int , Stack* , NodeIndex* );
+int pop_stack_tarjan(Stack* , NodeIndex* ); 
+
+void push_frontier_tarjan(int , Front*, NodeIndex* );
+int pop_frontier_tarjan(Front*, NodeIndex* );
+
 int expand_tarjan(int ,Front*,NodeIndex*, Buffer*);
+void SCC_update_solo(SCC* , int);
 
 QueryComp* edge_table(QueryComp*);
 void add_comp_edge(int , int , QueryComp* );
