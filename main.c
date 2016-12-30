@@ -69,7 +69,7 @@ int main(int argc,char* argv[])
 	if(!strcmp(mode, "F"))
 	{
 */
-		fp=fopen("ccTest.txt", "r");
+		fp=fopen("grailTest.txt", "r");
 
 		if(fp==NULL)
 		{
@@ -113,6 +113,43 @@ int main(int argc,char* argv[])
 
 	printf("Teleiwsa to Initialize \n");
 
+	//example gia to grail diko mou. ipotheto oti exei treksei tarjan
+	scc -> components_count = 6;
+
+	scc -> components[0].component_id = 0;
+	scc -> components[0].included_nodes_count = 3;
+	scc -> components[0].included_node_ids[0] = 0;
+	scc -> components[0].included_node_ids[0] = 1;
+	scc -> components[0].included_node_ids[0] = 2;
+
+	scc -> components[1].component_id = 1;
+	scc -> components[1].included_nodes_count = 3;
+	scc -> components[1].included_node_ids[0] = 3;
+	scc -> components[1].included_node_ids[0] = 4;
+	scc -> components[1].included_node_ids[0] = 5;
+
+	scc -> components[0].component_id = 2;
+	scc -> components[0].included_nodes_count = 4;
+	scc -> components[0].included_node_ids[0] = 6;
+	scc -> components[0].included_node_ids[0] = 7;
+	scc -> components[0].included_node_ids[0] = 8;
+	scc -> components[0].included_node_ids[0] = 9;
+
+	scc -> components[0].component_id = 3;
+	scc -> components[0].included_nodes_count = 1;
+	scc -> components[0].included_node_ids[0] = 10;
+
+	scc -> components[0].component_id = 4;
+	scc -> components[0].included_nodes_count = 1;
+	scc -> components[0].included_node_ids[0] = 11;
+
+	scc -> components[0].component_id = 5;
+	scc -> components[0].included_nodes_count = 1;
+	scc -> components[0].included_node_ids[0] = 11;
+	
+	createHyperGraph(buffer, index, scc);
+
+	//telos example gia to grail.
 	printf("PRin ton tarjan \n");
 	tarjan(index, index2, buffer, buffer2, scc);
 	printf("Bghka apo ton Tarjan \n");

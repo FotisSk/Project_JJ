@@ -1,5 +1,5 @@
-all: main.o definition.o bfs.o SCC.o UnitTesting.o
-	gcc -o pro main.o definition.o bfs.o SCC.o UnitTesting.o -g
+all: main.o definition.o bfs.o SCC.o grail.o UnitTesting.o
+	gcc -o pro main.o definition.o bfs.o SCC.o grail.o UnitTesting.o -g
 
 main.o: main.c
 	gcc -g -c main.c
@@ -15,3 +15,6 @@ bfs.o: bfs.c
 
 SCC.o: SCC.c
 	gcc -g -c SCC.c
+
+grail.o: grail.c
+	gcc -g -c grail.c
