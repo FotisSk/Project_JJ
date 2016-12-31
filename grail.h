@@ -8,14 +8,20 @@
 #include <errno.h>
 #include <stdbool.h>
 #include "definition.h"
+#include "SCC.h"
 #define STRLEN 1024
-#define N 15
+#define N 10
 #define HASH 200
 
 typedef struct hyperGraphStruct
 {
-	int size;
+	int indexSize;
+	int *strongNeighborsIndex;
+	
 	int *strongNeighbors;
+	int size;
+	int nextAvailablePos; //einai gia ton strongNeighbors
+		//einai gia ton strongNeighbors
 }hyperGraphStruct;
 
 
@@ -34,4 +40,6 @@ typedef struct grailStack
 	int last;
 }grailStack;
 
+
+hyperGraphStruct* createHyperGraph(Buffer* , NodeIndex* , SCC* );
 #endif	

@@ -7,7 +7,7 @@
 #include <string.h>
 #include <errno.h>
 #define STRLEN 1024
-#define N 15
+#define N 10
 #define HASH 200
 
 typedef struct hash_node

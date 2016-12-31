@@ -8,6 +8,7 @@
 #define STRLEN 1024
 #define FRONTLEN 5
 #define EDGELEN 3
+#define N 10
 
 /*****************************************************************************************/
 /******************************** CREATE AND INITIALIZE **********************************/
@@ -29,6 +30,13 @@ void SCC_initialize(SCC* SCC_ptr, int array_length, NodeIndex* index)
 	componentIndex = malloc(sizeof(Component)*array_length);
 	SCC_ptr->size=array_length;
 	SCC_ptr -> components = componentIndex;
+
+	for(i=0; i<array_length; i++)
+	{
+		SCC_ptr -> components[i].component_id = -1;
+		SCC_ptr -> components[i].included_nodes_count = 0;
+		SCC_ptr -> components[i].included_node_ids = malloc(array_length * sizeof(int));
+	}
 
 	indexSize = index -> size;
 	invertedIndex = malloc( sizeof(int) * indexSize );
@@ -64,6 +72,7 @@ Stack* stack_create()
 
 /*****************************************************************************************/
 /************************************** FRONTIER *****************************************/
+/*
 void push_frontier_tarjan(int node, Front* frontier, NodeIndex *index)
 {
 	if ((frontier->last+1) < frontier->size) 
@@ -99,10 +108,11 @@ int pop_frontier_tarjan(Front* frontier, NodeIndex* index)
 	}
 
 }
-
+*/
 
 /*****************************************************************************************/
 /*************************************** STACK *******************************************/
+/*
 void push_stack_tarjan(int node, Stack* stack, NodeIndex* index)
 {
 	if ((stack->last+1) < (stack->size) ) 
@@ -389,3 +399,5 @@ void weekly(int node1, int node2, NodeIndex* index, NodeIndex* index2,int* new_c
 		add_comp_edge( index_array[node1].cc , index_array2[node2].cc, ptr);
 	}
 }
+
+*/

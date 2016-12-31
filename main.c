@@ -5,7 +5,9 @@
 #include "Bfs.h"
 #include <time.h>
 #include "SCC.h"
+#include "grail.h"
 #define STRLEN 1024
+#define N 10
 
 
 int main(int argc,char* argv[])
@@ -34,7 +36,7 @@ int main(int argc,char* argv[])
 	BufferArrayInit(buffer, array_length);
 //2
 	Buffer* buffer2=createBuffer();
-    	BufferArrayInit(buffer2, array_length);
+    BufferArrayInit(buffer2, array_length);
 
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -98,8 +100,8 @@ int main(int argc,char* argv[])
 	int cc=0;
 	create_cc(index, index2, buffer, buffer2,&cc);
 	printf("Final CC is | %d | \n", cc) ;
-//	print_index_array(index, index -> size);
-//	print_buffer(buffer, buffer->size);
+	print_index_array(index, index -> size);
+	print_buffer(buffer, buffer->size);
 
 //	print_index_array(index2, index2 -> size);
 //	print_buffer(buffer2, buffer2->size);
@@ -119,36 +121,56 @@ int main(int argc,char* argv[])
 	scc -> components[0].component_id = 0;
 	scc -> components[0].included_nodes_count = 3;
 	scc -> components[0].included_node_ids[0] = 0;
-	scc -> components[0].included_node_ids[0] = 1;
-	scc -> components[0].included_node_ids[0] = 2;
+	scc -> components[0].included_node_ids[1] = 1;
+	scc -> components[0].included_node_ids[2] = 2;
 
 	scc -> components[1].component_id = 1;
 	scc -> components[1].included_nodes_count = 3;
 	scc -> components[1].included_node_ids[0] = 3;
-	scc -> components[1].included_node_ids[0] = 4;
-	scc -> components[1].included_node_ids[0] = 5;
+	scc -> components[1].included_node_ids[1] = 4;
+	scc -> components[1].included_node_ids[2] = 5;
 
-	scc -> components[0].component_id = 2;
-	scc -> components[0].included_nodes_count = 4;
-	scc -> components[0].included_node_ids[0] = 6;
-	scc -> components[0].included_node_ids[0] = 7;
-	scc -> components[0].included_node_ids[0] = 8;
-	scc -> components[0].included_node_ids[0] = 9;
+	scc -> components[2].component_id = 2;
+	scc -> components[2].included_nodes_count = 4;
+	scc -> components[2].included_node_ids[0] = 6;
+	scc -> components[2].included_node_ids[1] = 7;
+	scc -> components[2].included_node_ids[2] = 8;
+	scc -> components[2].included_node_ids[3] = 9;
 
-	scc -> components[0].component_id = 3;
-	scc -> components[0].included_nodes_count = 1;
-	scc -> components[0].included_node_ids[0] = 10;
+	scc -> components[3].component_id = 3;
+	scc -> components[3].included_nodes_count = 1;
+	scc -> components[3].included_node_ids[0] = 10;
 
-	scc -> components[0].component_id = 4;
-	scc -> components[0].included_nodes_count = 1;
-	scc -> components[0].included_node_ids[0] = 11;
+	scc -> components[4].component_id = 4;
+	scc -> components[4].included_nodes_count = 1;
+	scc -> components[4].included_node_ids[0] = 11;
 
-	scc -> components[0].component_id = 5;
-	scc -> components[0].included_nodes_count = 1;
-	scc -> components[0].included_node_ids[0] = 11;
+	scc -> components[5].component_id = 5;
+	scc -> components[5].included_nodes_count = 1;
+	scc -> components[5].included_node_ids[0] = 12;
+
+	scc -> id_belongs_to_component[0] = 0;
+	scc -> id_belongs_to_component[1] = 0;
+	scc -> id_belongs_to_component[2] = 0;
+
+	scc -> id_belongs_to_component[3] = 1;
+	scc -> id_belongs_to_component[4] = 1;
+	scc -> id_belongs_to_component[5] = 1;
+
+	scc -> id_belongs_to_component[6] = 2;
+	scc -> id_belongs_to_component[7] = 2;
+	scc -> id_belongs_to_component[8] = 2;
+	scc -> id_belongs_to_component[9] = 2;
+
+	scc -> id_belongs_to_component[10] = 3;
+
+	scc -> id_belongs_to_component[11] = 4;
+
+	scc -> id_belongs_to_component[12] = 5;
 	
-	createHyperGraph(buffer, index, scc);
-
+	hyperGraphStruct* hyperGraph = createHyperGraph(buffer, index, scc);
+	printf("Vgika apocreateHyperGraph.\n");
+	return 0;
 	//telos example gia to grail.
 	printf("PRin ton tarjan \n");
 	tarjan(index, index2, buffer, buffer2, scc);
@@ -159,6 +181,7 @@ int main(int argc,char* argv[])
 
     printf("|==================================================| \n");
 	printf("You have entered the next Phase of << Edge addition >> and << Queries >> \n");
+
 
 	fp=fopen("workload.txt", "r");
 

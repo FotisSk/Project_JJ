@@ -6,6 +6,7 @@
 #include <string.h>
 #include <errno.h>
 #define STRLEN 1024
+#define N 10
 
 
 Frontier* frontier_init()

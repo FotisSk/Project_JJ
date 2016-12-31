@@ -8,6 +8,7 @@
 #include <errno.h>
 #include "definition.h"
 #define STRLEN 1024
+#define N 10
 //iuytfyutfcjytgcjykcvjkgtycvf
 
 typedef struct PathNode

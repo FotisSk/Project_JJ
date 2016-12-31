@@ -5,6 +5,7 @@
 #include <string.h>
 #include <errno.h>
 #define STRLEN 1024
+#define N 10
 
 NodeIndex* createNodeIndex()
 {
@@ -19,7 +20,7 @@ Buffer* createBuffer()
         return BufferHead;
 }
 
-void IndexArrayInit(NodeIndex* ptr,int size)
+void IndexArrayInit(NodeIndex* ptr, int size)
 {
 	if(ptr == NULL)
 	{
@@ -299,7 +300,7 @@ void print_buffer(Buffer* buffer, int SIZE_b)
 	buffer_array = buffer->buffer_array;
 
 	printf("->PRINTING BUFFER ARRAY.. \n");
-    	printf("|==========================================|\n");
+    printf("|==========================================|\n");
 	for(i=0; i<SIZE_b; i++)
 	{
 		printf("Position | %d | *** Neighbor[] = | ",i );
