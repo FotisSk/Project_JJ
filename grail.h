@@ -15,31 +15,50 @@
 
 typedef struct hyperGraphStruct
 {
+	//strongNeighborsIndex
 	int indexSize;
 	int *strongNeighborsIndex;
 	
+	//strongNeighbors
 	int *strongNeighbors;
 	int size;
-	int nextAvailablePos; //einai gia ton strongNeighbors
-		//einai gia ton strongNeighbors
+	int nextAvailablePos;
+
+	//grail
+	int minRank;
+	int rank;
+		
 }hyperGraphStruct;
 
 
 typedef struct grailFront
 {
-	int* front_array;
+	int* frontArray;
 	int size;
 	int last;
 }grailFront;
 
 typedef struct grailStack
 {
-	int* stack_array;
+	int* stackArray;
 	int size;
 	int current;
 	int last;
 }grailStack;
 
+typedef struct grailIndex
+{
+	int index;
+	hyperGraphStruct *hyperGraph;
+}grailIndex;
+
 
 hyperGraphStruct* createHyperGraph(Buffer* , NodeIndex* , SCC* );
+void destroyHyperGraph(hyperGraphStruct* , int );
+
+void pushFrontier(int , grailFront *);
+int popFrontier(grailFront *);
+int minRankOfChildren(int , hyperGraphStruct *);
+
+grailIndex* buildGrailIndex(NodeIndex *, Buffer *, SCC *);
 #endif	

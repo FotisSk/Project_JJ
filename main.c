@@ -169,10 +169,11 @@ int main(int argc,char* argv[])
 	scc -> id_belongs_to_component[12] = 5;
 	
 	hyperGraphStruct* hyperGraph = createHyperGraph(buffer, index, scc);
-	printf("Vgika apocreateHyperGraph.\n");
+	printf("\n(vgika apo createHyperGraph)\n");
+	destroyHyperGraph(hyperGraph, scc->components_count);
 	return 0;
 	//telos example gia to grail.
-	printf("PRin ton tarjan \n");
+	printf("Prin ton tarjan \n");
 	tarjan(index, index2, buffer, buffer2, scc);
 	printf("Bghka apo ton Tarjan \n");
 

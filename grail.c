@@ -16,6 +16,10 @@
 //dokimi periptosis pou na ginetai realloc ston pinaka strongNeighbors
 
 //arxikopoihsh scc gia paradeigma diko mou.
+
+
+/**********************************************************************************************************/
+/********************************************** HYPERGRAPH ***********************************************/
 hyperGraphStruct* createHyperGraph(Buffer* buffer, NodeIndex* index, SCC* sccPtr)
 {
 	int i, j, k, offset, sccID, nodeToCheck, flag, indexSize, nextAvailablePos;
@@ -41,6 +45,10 @@ hyperGraphStruct* createHyperGraph(Buffer* buffer, NodeIndex* index, SCC* sccPtr
 		hyperGraphArray[i].indexSize = 5;
 		hyperGraphArray[i].size = 5;
 		hyperGraphArray[i].nextAvailablePos = 0;
+
+		//(minRank, rank)
+		hyperGraphArray[i].minRank = 0;
+		hyperGraphArray[i].rank = 0;
 	}
 	buffer_array = buffer -> buffer_array;
 	index_array = index -> index_array;
@@ -98,12 +106,13 @@ hyperGraphStruct* createHyperGraph(Buffer* buffer, NodeIndex* index, SCC* sccPtr
 					    nextAvailablePos = hyperGraphArray[i].nextAvailablePos;
 					    if(nextAvailablePos >= hyperGraphArray[i].size)
 					    {
-					    	newStrongNeighbors = realloc(hyperGraphArray[i].strongNeighbors, hyperGraphArray[i].indexSize * sizeof(int));
+					    	printf("strongNeighbors is full (realloc)\n");
+					    	hyperGraphArray[i].size = 2*hyperGraphArray[i].size;
+					    	newStrongNeighbors = realloc(hyperGraphArray[i].strongNeighbors, hyperGraphArray[i].size * sizeof(int));
 					    	hyperGraphArray[i].strongNeighbors = newStrongNeighbors;
 					    }
 					    hyperGraphArray[i].strongNeighbors[nextAvailablePos] = sccID;
 					    hyperGraphArray[i].nextAvailablePos++;
-
 						continue;
 					}
 					
@@ -114,7 +123,9 @@ hyperGraphStruct* createHyperGraph(Buffer* buffer, NodeIndex* index, SCC* sccPtr
 						nextAvailablePos = hyperGraphArray[i].nextAvailablePos;
 					    if(nextAvailablePos >= hyperGraphArray[i].size)
 					    {
-					    	newStrongNeighbors = realloc(hyperGraphArray[i].strongNeighbors, hyperGraphArray[i].indexSize * sizeof(int));
+					    	printf("strongNeighbors is full (realloc)\n");
+					    	hyperGraphArray[i].size = 2*hyperGraphArray[i].size;
+					    	newStrongNeighbors = realloc(hyperGraphArray[i].strongNeighbors, hyperGraphArray[i].size * sizeof(int));
 					    	hyperGraphArray[i].strongNeighbors = newStrongNeighbors;
 					    }
 					    hyperGraphArray[i].strongNeighbors[nextAvailablePos] = sccID;
@@ -134,4 +145,99 @@ hyperGraphStruct* createHyperGraph(Buffer* buffer, NodeIndex* index, SCC* sccPtr
 		}//for j
 	}//for i
 	return hyperGraphArray;
+}
+
+
+void destroyHyperGraph(hyperGraphStruct* hyperGraph, int components_count)
+{
+	int i;
+
+	for(i=0; i<components_count; i++)
+	{
+		free(hyperGraph[i].strongNeighbors);
+		free(hyperGraph[i].strongNeighborsIndex);
+	}
+	free(hyperGraph);
+	printf("\n** hyperGraph destroyed **\n");
+}
+
+
+/**************************************************************************************************/
+/********************************************* GRAIL *********************************************/
+void pushFrontier(int sccID, grailFront *frontier)
+{
+	int last, size;
+
+	last = frontier -> last;
+	size = frontier -> size;
+	if(last == size-1)
+	{
+		printf("Frontier is full (realloc)\n");
+		frontier -> size = size * 2;
+		frontier -> frontArray = realloc(frontier -> frontArray, frontier->size * sizeof(int));
+	}
+	frontier -> frontArray[last+1] = sccID;
+	frontier -> last = last + 1;
+}
+
+int popFrontier(grailFront *frontier)
+{
+	int last;
+
+	last = frontier -> last;
+	if(last != -1)
+	{
+		frontier -> last = last- 1;
+		return frontier -> frontArray[last];
+	}
+	else
+	{
+		printf("Frontier is empty!\n");
+		return -1;
+	}
+}
+
+int minRankOfChildren(int sccID, hyperGraphStruct *hyperGraph)	//efarmozetai se components pou exoun paidia
+{
+	int i, min, strongNeighbor, nextAvailablePos;
+
+	strongNeighbor = hyperGraph[sccID].strongNeighbors[0];
+	min = hyperGraph[strongNeighbor].minRank;
+
+	nextAvailablePos = hyperGraph[sccID].nextAvailablePos;
+	for(i=1; i<nextAvailablePos; i++)
+	{
+		strongNeighbor = hyperGraph[sccID].strongNeighbors[i];
+		if(hyperGraph[strongNeighbor].minRank < min)
+			min = hyperGraph[strongNeighbor].minRank;
+	}
+	printf("scc: %d gets minRank: %d\n", sccID, min);
+	return min;
+}
+//na prostethei i expand pou tha koitaei ola ta paidia enos scc-komvou kai tha girnaei apo telesma analoga me to an exei aneksereunita, exei 0, einai ola eksereunimena. (na tavazeikai frontier? isos nai)
+
+
+grailIndex* buildGrailIndex(NodeIndex *index, Buffer *buffer, SCC *sccPtr)
+{
+	grailIndex *grail;
+	grailFront *frontier;
+	grailStack *stack;
+
+	//grail initialization
+	grail = malloc(sizeof(grailIndex));
+	grail -> index = 1;
+	grail -> hyperGraph = createHyperGraph(buffer, index, sccPtr);
+
+	//frontier initialization
+	frontier = malloc(sizeof(grailFront));
+	frontier -> size = 10;
+	frontier -> last = -1;
+
+	//stack initialization
+	stack = malloc(sizeof(grailStack));
+	stack -> size = 10;
+	stack -> current = -1;
+	stack -> last = -1;
+
+
 }
