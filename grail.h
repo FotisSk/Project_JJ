@@ -27,6 +27,8 @@ typedef struct hyperGraphStruct
 	//grail
 	int minRank;
 	int rank;
+	int parent;
+	int unvisitedChildren;
 		
 }hyperGraphStruct;
 
@@ -49,7 +51,9 @@ typedef struct grailStack
 typedef struct grailIndex
 {
 	int index;
+	int size;
 	hyperGraphStruct *hyperGraph;
+	grailFront *frontier;
 }grailIndex;
 
 
@@ -59,6 +63,8 @@ void destroyHyperGraph(hyperGraphStruct* , int );
 void pushFrontier(int , grailFront *);
 int popFrontier(grailFront *);
 int minRankOfChildren(int , hyperGraphStruct *);
+int grailExpand(int , hyperGraphStruct *, grailFront *);
 
 grailIndex* buildGrailIndex(NodeIndex *, Buffer *, SCC *);
+void destroyGrailIndex(grailIndex *);
 #endif	

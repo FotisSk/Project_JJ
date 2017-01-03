@@ -72,7 +72,7 @@ Stack* stack_create()
 
 /*****************************************************************************************/
 /************************************** FRONTIER *****************************************/
-/*
+
 void push_frontier_tarjan(int node, Front* frontier, NodeIndex *index)
 {
 	if ((frontier->last+1) < frontier->size) 
@@ -108,11 +108,11 @@ int pop_frontier_tarjan(Front* frontier, NodeIndex* index)
 	}
 
 }
-*/
+
 
 /*****************************************************************************************/
 /*************************************** STACK *******************************************/
-/*
+
 void push_stack_tarjan(int node, Stack* stack, NodeIndex* index)
 {
 	if ((stack->last+1) < (stack->size) ) 
@@ -400,4 +400,3 @@ void weekly(int node1, int node2, NodeIndex* index, NodeIndex* index2,int* new_c
 	}
 }
 
-*/

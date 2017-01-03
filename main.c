@@ -168,9 +168,15 @@ int main(int argc,char* argv[])
 
 	scc -> id_belongs_to_component[12] = 5;
 	
-	hyperGraphStruct* hyperGraph = createHyperGraph(buffer, index, scc);
-	printf("\n(vgika apo createHyperGraph)\n");
-	destroyHyperGraph(hyperGraph, scc->components_count);
+	grailIndex *grail;
+	grail = buildGrailIndex(index, buffer, scc);
+	printf("\nGrail construction has been completed.\n");
+	//hyperGraphStruct* hyperGraph = createHyperGraph(buffer, index, scc);
+	//printf("\n(vgika apo createHyperGraph)\n");
+	//destroyHyperGraph(hyperGraph, scc->components_count);
+	destroyGrailIndex(grail);
+	free(grail);
+	printf("\nGrail has been destroyed\n");
 	return 0;
 	//telos example gia to grail.
 	printf("Prin ton tarjan \n");
