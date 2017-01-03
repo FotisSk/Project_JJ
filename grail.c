@@ -14,8 +14,6 @@
 
 
 //prosoxi sta uint32_t vs int aplo.
-//dokimi periptosis pou na ginetai realloc ston pinaka strongNeighbors
-
 //arxikopoihsh scc gia paradeigma diko mou.
 
 
@@ -47,7 +45,7 @@ hyperGraphStruct* createHyperGraph(Buffer* buffer, NodeIndex* index, SCC* sccPtr
 		hyperGraphArray[i].size = 5;
 		hyperGraphArray[i].nextAvailablePos = 0;
 
-		//(minRank, rank)
+		//grail
 		hyperGraphArray[i].minRank = 0;
 		hyperGraphArray[i].rank = 0;
 		hyperGraphArray[i].parent = -1;
@@ -169,7 +167,7 @@ void destroyHyperGraph(hyperGraphStruct* hyperGraph, int components_count)
 
 /**************************************************************************************************/
 /********************************************* GRAIL *********************************************/
-void pushFrontier(int sccID, grailFront *frontier)
+void pushFrontier(int sccID, int parent, grailFront *frontier)
 {
 	int last, size;
 
@@ -179,13 +177,14 @@ void pushFrontier(int sccID, grailFront *frontier)
 	{
 		printf("Frontier is full (realloc)\n");
 		frontier -> size = size * 2;
-		frontier -> frontArray = realloc(frontier -> frontArray, frontier->size * sizeof(int));
+		frontier -> frontArray = realloc(frontier -> frontArray, frontier->size * sizeof(frontierEntry));
 	}
-	frontier -> frontArray[last+1] = sccID;
+	frontier -> frontArray[last+1].sccID = sccID;
+	frontier -> frontArray[last+1].parent = parent;
 	frontier -> last = last + 1;
 }
 
-int popFrontier(grailFront *frontier)
+frontierEntry popFrontier(grailFront *frontier)
 {
 	int last;
 
@@ -198,10 +197,11 @@ int popFrontier(grailFront *frontier)
 	else
 	{
 		printf("Frontier is empty!\n");
-		return -1;
+		//return NULL;
 	}
 }
 
+/*
 void pushStack(int sccID, grailStack *stack)
 {
 	int last, size;
@@ -218,7 +218,7 @@ void pushStack(int sccID, grailStack *stack)
 	stack -> last = last + 1;
 	stack -> current = stack -> last;
 
-}
+}*/
 
 int minRankOfChildren(int sccID, hyperGraphStruct *hyperGraph)	//efarmozetai se components pou exoun paidia
 {
@@ -256,7 +256,7 @@ int grailExpand(int sccID, hyperGraphStruct *hyperGraph, grailFront *frontier)
 		{
 			unvisitedChildren++;
 			hyperGraph[strongNeighbor].parent = sccID;
-			pushFrontier(strongNeighbor, frontier);
+			pushFrontier(strongNeighbor, sccID, frontier);	//to sccID edo dilonei parent tou strongNeighbor
 		}
 	}
 	hyperGraph[sccID].unvisitedChildren = unvisitedChildren;
@@ -267,10 +267,12 @@ grailIndex* buildGrailIndex(NodeIndex *index, Buffer *buffer, SCC *sccPtr)
 {
 	int unvisitedComponent, randomComp, sccID, expandResult;
 
+
 	grailIndex *grail;
 	grailFront *frontier;
 	grailStack *stack;
 	hyperGraphStruct *hyperGraph;
+	frontierEntry entry;
 
 	//grail initialization
 	grail = malloc(sizeof(grailIndex));
@@ -284,7 +286,7 @@ grailIndex* buildGrailIndex(NodeIndex *index, Buffer *buffer, SCC *sccPtr)
 	//frontier initialization
 	grail -> frontier = malloc(sizeof(grailFront));
 	frontier = grail -> frontier;
-	frontier -> frontArray = malloc(10*sizeof(int));
+	frontier -> frontArray = malloc(10*sizeof(frontierEntry));
 	frontier -> size = 10;
 	frontier -> last = -1;
 	printf("Frontier creation and initialization completed.\n");
@@ -309,32 +311,35 @@ grailIndex* buildGrailIndex(NodeIndex *index, Buffer *buffer, SCC *sccPtr)
 			randomComp = rand() % sccPtr -> components_count;
 		//randomComp = 2; //test only
 		printf("randomComp: %d\n", randomComp);
-		pushFrontier(randomComp, frontier);
+		pushFrontier(randomComp, -1, frontier); //-1 h hyperGraph[randomComp].parent pou einai pali -1 stin arxi.
 		while(frontier -> last != -1)	//oso to frontier DEN einai adeio
 		{
-			sccID = popFrontier(frontier);
+			entry = popFrontier(frontier);
+			sccID = entry.sccID;
 			printf("popped sccID: %d, ", sccID);
 			if(hyperGraph[sccID].minRank != 0 || hyperGraph[sccID].rank != 0) //na testaristei to paradeigma sto xarti. thelei auto + elegxo stin expand an exei idi timi o pateras na tou meiosei to unvisited. prosoxi 358 break.
 			{
-				//sccID = hyperGraph[sccID].parent;
-				//hyperGraph[sccID].unvisitedChildren--;
-				continue;
+				printf("already visited by parent: %d\n", hyperGraph[sccID].parent);
+				sccID = entry.parent;
+				hyperGraph[sccID].unvisitedChildren--;
 			}
-			
-			expandResult = grailExpand(sccID, hyperGraph, frontier);
-			printf("expandResult: %d\n", expandResult);
-			if(expandResult == -1)	//an den exei katholou paidia
+			else
 			{
-				hyperGraph[sccID].rank = grail -> index;
-				hyperGraph[sccID].minRank = grail -> index;
-				unvisitedComponent--;
-				grail -> index = (grail -> index) + 1;
-				printf("sccID: %d (minRank, rank) = (%d, %d)\n", sccID, hyperGraph[sccID].minRank, hyperGraph[sccID].rank);
-				//pare ton patera, an den einai o pateras o idios, kai meiose ta unvisitedChildren tou kata 1
-				if(sccID != randomComp)
+				expandResult = grailExpand(sccID, hyperGraph, frontier);
+				printf("expandResult: %d\n", expandResult);
+				if(expandResult == -1)	//an den exei katholou paidia
 				{
-					sccID = hyperGraph[sccID].parent;
-					hyperGraph[sccID].unvisitedChildren--;
+					hyperGraph[sccID].rank = grail -> index;
+					hyperGraph[sccID].minRank = grail -> index;
+					unvisitedComponent--;
+					grail -> index = (grail -> index) + 1;
+					printf("sccID: %d (minRank, rank) = (%d, %d)\n", sccID, hyperGraph[sccID].minRank, hyperGraph[sccID].rank);
+					//pare ton patera, an den einai o pateras o idios, kai meiose ta unvisitedChildren tou kata 1
+					if(sccID != randomComp)
+					{
+						sccID = hyperGraph[sccID].parent;
+						hyperGraph[sccID].unvisitedChildren--;
+					}
 				}
 			}
 
@@ -366,6 +371,35 @@ grailIndex* buildGrailIndex(NodeIndex *index, Buffer *buffer, SCC *sccPtr)
 	return grail;
 }
 
+int isReachableGrailIndex(grailIndex *grail, SCC *sccPtr, int start, int destination)
+{
+	int sccStart, sccDestination;
+	hyperGraphStruct *hyperGraph;
+
+	hyperGraph = grail -> hyperGraph;
+	sccStart = sccPtr -> id_belongs_to_component[start];
+	sccDestination = sccPtr -> id_belongs_to_component[destination];
+
+
+	if( sccStart == sccDestination )
+	{
+		printf("(YES) -> There is a path between startNode: %d(%d) and destinationNode: %d(%d).\n", start, sccStart, destination, sccDestination);
+		return 2; //"YES"
+	}
+	else
+	{
+		if( (hyperGraph[sccDestination].minRank >= hyperGraph[sccStart].minRank) && (hyperGraph[sccDestination].rank <= hyperGraph[sccStart].rank) )
+		{
+			printf("(MAYBE) -> There might be a path between startNode: %d(%d) and destinationNode: %d(%d).\n", start, sccStart, destination, sccDestination);
+			return 1; //"MAYBE"
+		}
+		else
+		{
+			printf("(NO) -> There is no path between startNode: %d(%d) and destinationNode: %d(%d).\n", start, sccStart, destination, sccDestination);
+			return 0; //"NO"
+		}
+	}
+}
 
 void destroyGrailIndex(grailIndex *grail)
 {

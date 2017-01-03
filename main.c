@@ -40,6 +40,7 @@ int main(int argc,char* argv[])
 
 //////////////////////////////////////////////////////////////////////////////////
 
+
 	Frontier* frontier;
 	Frontier* frontier2;
 	int cycle = 0;//kiklos tis bfs
@@ -115,7 +116,8 @@ int main(int argc,char* argv[])
 
 	printf("Teleiwsa to Initialize \n");
 
-	//example gia to grail diko mou. ipotheto oti exei treksei tarjan
+	//grailTest
+	
 	scc -> components_count = 6;
 
 	scc -> components[0].component_id = 0;
@@ -168,9 +170,77 @@ int main(int argc,char* argv[])
 
 	scc -> id_belongs_to_component[12] = 5;
 	
+	//grailTest2
+	/*
+	scc -> components_count = 4;
+
+	scc -> components[0].component_id = 0;
+	scc -> components[0].included_nodes_count = 3;
+	scc -> components[0].included_node_ids[0] = 0;
+	scc -> components[0].included_node_ids[1] = 1;
+	scc -> components[0].included_node_ids[2] = 2;
+
+	scc -> components[1].component_id = 1;
+	scc -> components[1].included_nodes_count = 3;
+	scc -> components[1].included_node_ids[0] = 6;
+	scc -> components[1].included_node_ids[1] = 7;
+	scc -> components[1].included_node_ids[2] = 8;
+
+	scc -> components[2].component_id = 2;
+	scc -> components[2].included_nodes_count = 3;
+	scc -> components[2].included_node_ids[0] = 3;
+	scc -> components[2].included_node_ids[1] = 4;
+	scc -> components[2].included_node_ids[2] = 5;
+
+	scc -> components[3].component_id = 3;
+	scc -> components[3].included_nodes_count = 1;
+	scc -> components[3].included_node_ids[0] = 9;
+
+	
+	scc -> id_belongs_to_component[0] = 0;
+	scc -> id_belongs_to_component[1] = 0;
+	scc -> id_belongs_to_component[2] = 0;
+
+	scc -> id_belongs_to_component[6] = 1;
+	scc -> id_belongs_to_component[7] = 1;
+	scc -> id_belongs_to_component[8] = 1;
+
+	scc -> id_belongs_to_component[3] = 2;
+	scc -> id_belongs_to_component[4] = 2;
+	scc -> id_belongs_to_component[5] = 2;
+
+	scc -> id_belongs_to_component[9] = 3;
+*/
+
 	grailIndex *grail;
 	grail = buildGrailIndex(index, buffer, scc);
 	printf("\nGrail construction has been completed.\n");
+
+	isReachableGrailIndex(grail, scc, 0, 1);
+	isReachableGrailIndex(grail, scc, 1, 0);
+
+	isReachableGrailIndex(grail, scc, 2, 4);
+	isReachableGrailIndex(grail, scc, 1, 5);
+	isReachableGrailIndex(grail, scc, 5, 1);
+	isReachableGrailIndex(grail, scc, 0, 2);
+	isReachableGrailIndex(grail, scc, 0, 3);
+	isReachableGrailIndex(grail, scc, 1, 4);
+	isReachableGrailIndex(grail, scc, 1, 6);
+	isReachableGrailIndex(grail, scc, 1, 10);
+	isReachableGrailIndex(grail, scc, 1, 11);
+
+
+
+	isReachableGrailIndex(grail, scc, 2, 7);
+	isReachableGrailIndex(grail, scc, 4, 2);
+	isReachableGrailIndex(grail, scc, 9, 0);
+	isReachableGrailIndex(grail, scc, 6, 4);
+	isReachableGrailIndex(grail, scc, 5, 2);
+	isReachableGrailIndex(grail, scc, 5, 0);
+	isReachableGrailIndex(grail, scc, 6, 3);
+	isReachableGrailIndex(grail, scc, 6, 1);
+	isReachableGrailIndex(grail, scc, 8, 2);
+
 	//hyperGraphStruct* hyperGraph = createHyperGraph(buffer, index, scc);
 	//printf("\n(vgika apo createHyperGraph)\n");
 	//destroyHyperGraph(hyperGraph, scc->components_count);

@@ -32,10 +32,15 @@ typedef struct hyperGraphStruct
 		
 }hyperGraphStruct;
 
+typedef struct frontierEntry
+{
+	int sccID;
+	int parent;
+}frontierEntry;
 
 typedef struct grailFront
 {
-	int* frontArray;
+	frontierEntry *frontArray;
 	int size;
 	int last;
 }grailFront;
@@ -60,11 +65,12 @@ typedef struct grailIndex
 hyperGraphStruct* createHyperGraph(Buffer* , NodeIndex* , SCC* );
 void destroyHyperGraph(hyperGraphStruct* , int );
 
-void pushFrontier(int , grailFront *);
-int popFrontier(grailFront *);
+void pushFrontier(int , int, grailFront *);
+frontierEntry popFrontier(grailFront *);
 int minRankOfChildren(int , hyperGraphStruct *);
 int grailExpand(int , hyperGraphStruct *, grailFront *);
 
 grailIndex* buildGrailIndex(NodeIndex *, Buffer *, SCC *);
+int isReachableGrailIndex(grailIndex *, SCC *, int , int );
 void destroyGrailIndex(grailIndex *);
 #endif	
