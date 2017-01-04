@@ -72,7 +72,7 @@ int main(int argc,char* argv[])
 	if(!strcmp(mode, "F"))
 	{
 */
-		fp=fopen("grailTest.txt", "r");
+		fp=fopen("grailTest2.txt", "r");
 
 		if(fp==NULL)
 		{
@@ -117,7 +117,7 @@ int main(int argc,char* argv[])
 	printf("Teleiwsa to Initialize \n");
 
 	//grailTest
-	
+	/*
 	scc -> components_count = 6;
 
 	scc -> components[0].component_id = 0;
@@ -169,10 +169,10 @@ int main(int argc,char* argv[])
 	scc -> id_belongs_to_component[11] = 4;
 
 	scc -> id_belongs_to_component[12] = 5;
-	
+	*/
 	//grailTest2
-	/*
-	scc -> components_count = 4;
+	
+	scc -> components_count = 8;
 
 	scc -> components[0].component_id = 0;
 	scc -> components[0].included_nodes_count = 3;
@@ -196,6 +196,26 @@ int main(int argc,char* argv[])
 	scc -> components[3].included_nodes_count = 1;
 	scc -> components[3].included_node_ids[0] = 9;
 
+	scc -> components[4].component_id = 4;
+	scc -> components[4].included_nodes_count = 1;
+	scc -> components[4].included_node_ids[0] = 10;
+
+	scc -> components[5].component_id = 5;
+	scc -> components[5].included_nodes_count = 3;
+	scc -> components[5].included_node_ids[0] = 11;
+	scc -> components[5].included_node_ids[1] = 12;
+	scc -> components[5].included_node_ids[2] = 13;
+
+	scc -> components[6].component_id = 6;
+	scc -> components[6].included_nodes_count = 1;
+	scc -> components[6].included_node_ids[0] = 14;
+
+	scc -> components[7].component_id = 7;
+	scc -> components[7].included_nodes_count = 4;
+	scc -> components[7].included_node_ids[0] = 15;
+	scc -> components[7].included_node_ids[1] = 16;
+	scc -> components[7].included_node_ids[2] = 17;
+	scc -> components[7].included_node_ids[3] = 18;
 	
 	scc -> id_belongs_to_component[0] = 0;
 	scc -> id_belongs_to_component[1] = 0;
@@ -210,7 +230,20 @@ int main(int argc,char* argv[])
 	scc -> id_belongs_to_component[5] = 2;
 
 	scc -> id_belongs_to_component[9] = 3;
-*/
+
+	scc -> id_belongs_to_component[10] = 4;
+
+	scc -> id_belongs_to_component[11] = 5;
+	scc -> id_belongs_to_component[12] = 5;
+	scc -> id_belongs_to_component[13] = 5;
+
+	scc -> id_belongs_to_component[14] = 6;
+
+	scc -> id_belongs_to_component[15] = 7;
+	scc -> id_belongs_to_component[16] = 7;
+	scc -> id_belongs_to_component[17] = 7;
+	scc -> id_belongs_to_component[18] = 7;
+
 
 	grailIndex *grail;
 	grail = buildGrailIndex(index, buffer, scc);
