@@ -10,6 +10,7 @@
 #define STRLEN 1024
 #define FRONTLEN 5
 #define EDGELEN 3
+#define numOfGrails 3
 #define N 10
 
 
@@ -300,7 +301,6 @@ grailIndex* buildGrailIndex(NodeIndex *index, Buffer *buffer, SCC *sccPtr)
 	printf("Stack creation and initialization completed.\n");
 	*/
 
-	srand(time(NULL));
 	unvisitedComponent = sccPtr -> components_count;	//visit/eksereunimeno = na parei timi to (minRank, rank)
 	while(unvisitedComponent != 0)
 	{
@@ -371,15 +371,13 @@ grailIndex* buildGrailIndex(NodeIndex *index, Buffer *buffer, SCC *sccPtr)
 	return grail;
 }
 
-int isReachableGrailIndex(grailIndex *grail, SCC *sccPtr, int start, int destination)
+int isReachableGrailIndex(grailIndex **grailArray, SCC *sccPtr, int start, int destination)
 {
-	int sccStart, sccDestination;
+	int sccStart, sccDestination, i;
 	hyperGraphStruct *hyperGraph;
 
-	hyperGraph = grail -> hyperGraph;
 	sccStart = sccPtr -> id_belongs_to_component[start];
 	sccDestination = sccPtr -> id_belongs_to_component[destination];
-
 
 	if( sccStart == sccDestination )
 	{
@@ -388,8 +386,29 @@ int isReachableGrailIndex(grailIndex *grail, SCC *sccPtr, int start, int destina
 	}
 	else
 	{
+		i = 0;
+		while(i < numOfGrails)
+		{
+			hyperGraph = grailArray[i] -> hyperGraph;
+			if( (hyperGraph[sccDestination].minRank >= hyperGraph[sccStart].minRank) && (hyperGraph[sccDestination].rank <= hyperGraph[sccStart].rank) )
+			{
+				printf("grail: %d gave us MAYBE. go to the next one.\n", i);
+				i++;
+			}
+			else
+			{
+				printf("(NO) -> There is no path between startNode: %d(%d) and destinationNode: %d(%d).\n", start, sccStart, destination, sccDestination);
+				return 0;
+			}
+		}
+		//ama vgei simainei oti ola edosan MAYBE opote...
+		printf("(MAYBE) -> There might be a path between startNode: %d(%d) and destinationNode: %d(%d).\n", start, sccStart, destination, sccDestination);
+		return 1; //"MAYBE"
+	}
+	/*
 		if( (hyperGraph[sccDestination].minRank >= hyperGraph[sccStart].minRank) && (hyperGraph[sccDestination].rank <= hyperGraph[sccStart].rank) )
 		{
+
 			printf("(MAYBE) -> There might be a path between startNode: %d(%d) and destinationNode: %d(%d).\n", start, sccStart, destination, sccDestination);
 			return 1; //"MAYBE"
 		}
@@ -397,14 +416,18 @@ int isReachableGrailIndex(grailIndex *grail, SCC *sccPtr, int start, int destina
 		{
 			printf("(NO) -> There is no path between startNode: %d(%d) and destinationNode: %d(%d).\n", start, sccStart, destination, sccDestination);
 			return 0; //"NO"
-		}
-	}
+		}*/
 }
 
-void destroyGrailIndex(grailIndex *grail)
+void destroyGrailIndex(grailIndex **grailArray)
 {
-	destroyHyperGraph(grail -> hyperGraph, grail -> size);
-	free(grail -> frontier -> frontArray);
-	free(grail -> frontier);
+	int i;
+	
+	for(i=0; i<numOfGrails; i++)
+	{
+		destroyHyperGraph(grailArray[i] -> hyperGraph, grailArray[i] -> size);
+		free(grailArray[i] -> frontier -> frontArray);
+		free(grailArray[i] -> frontier);
+	}
 	//printf("\nEvery structure inside grail has been destroyed.\n");
 }

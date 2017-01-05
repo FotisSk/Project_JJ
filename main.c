@@ -7,6 +7,7 @@
 #include "SCC.h"
 #include "grail.h"
 #define STRLEN 1024
+#define numOfGrails 3
 #define N 10
 
 
@@ -244,41 +245,59 @@ int main(int argc,char* argv[])
 	scc -> id_belongs_to_component[17] = 7;
 	scc -> id_belongs_to_component[18] = 7;
 
-
+	int i;
 	grailIndex *grail;
-	grail = buildGrailIndex(index, buffer, scc);
+	grailIndex **grailArray;
+
+	srand(time(NULL));
+	grailArray = malloc(numOfGrails * sizeof(grailIndex));
+	for(i=0; i<numOfGrails; i++)
+	{
+		grail = buildGrailIndex(index, buffer, scc);
+		grailArray[i] = grail;
+	}
 	printf("\nGrail construction has been completed.\n");
 
-	isReachableGrailIndex(grail, scc, 0, 1);
-	isReachableGrailIndex(grail, scc, 1, 0);
 
-	isReachableGrailIndex(grail, scc, 2, 4);
-	isReachableGrailIndex(grail, scc, 1, 5);
-	isReachableGrailIndex(grail, scc, 5, 1);
-	isReachableGrailIndex(grail, scc, 0, 2);
-	isReachableGrailIndex(grail, scc, 0, 3);
-	isReachableGrailIndex(grail, scc, 1, 4);
-	isReachableGrailIndex(grail, scc, 1, 6);
-	isReachableGrailIndex(grail, scc, 1, 10);
-	isReachableGrailIndex(grail, scc, 1, 11);
-
-
-
-	isReachableGrailIndex(grail, scc, 2, 7);
-	isReachableGrailIndex(grail, scc, 4, 2);
-	isReachableGrailIndex(grail, scc, 9, 0);
-	isReachableGrailIndex(grail, scc, 6, 4);
-	isReachableGrailIndex(grail, scc, 5, 2);
-	isReachableGrailIndex(grail, scc, 5, 0);
-	isReachableGrailIndex(grail, scc, 6, 3);
-	isReachableGrailIndex(grail, scc, 6, 1);
-	isReachableGrailIndex(grail, scc, 8, 2);
+	isReachableGrailIndex(grailArray, scc, 6, 0);
+	isReachableGrailIndex(grailArray, scc, 3, 6);
+	isReachableGrailIndex(grailArray, scc, 4, 1);
+	isReachableGrailIndex(grailArray, scc, 5, 9);
+	isReachableGrailIndex(grailArray, scc, 9, 15);
+	isReachableGrailIndex(grailArray, scc, 9, 14);
+	isReachableGrailIndex(grailArray, scc, 13, 14);
+	isReachableGrailIndex(grailArray, scc, 12, 10);
+	isReachableGrailIndex(grailArray, scc, 17, 7);
+	isReachableGrailIndex(grailArray, scc, 12, 1);
+	isReachableGrailIndex(grailArray, scc, 14, 7);
+	/*
+	isReachableGrailIndex(grailArray, scc, 0, 1);
+	isReachableGrailIndex(grailArray, scc, 1, 0);
+	isReachableGrailIndex(grailArray, scc, 2, 4);
+	isReachableGrailIndex(grailArray, scc, 1, 5);
+	isReachableGrailIndex(grailArray, scc, 5, 1);
+	isReachableGrailIndex(grailArray, scc, 0, 2);
+	isReachableGrailIndex(grailArray, scc, 0, 3);
+	isReachableGrailIndex(grailArray, scc, 1, 4);
+	isReachableGrailIndex(grailArray, scc, 1, 6);
+	isReachableGrailIndex(grailArray, scc, 1, 10);
+	isReachableGrailIndex(grailArray, scc, 1, 11);
+	isReachableGrailIndex(grailArray, scc, 2, 7);
+	isReachableGrailIndex(grailArray, scc, 4, 2);
+	isReachableGrailIndex(grailArray, scc, 9, 0);
+	isReachableGrailIndex(grailArray, scc, 6, 4);
+	isReachableGrailIndex(grailArray, scc, 5, 2);
+	isReachableGrailIndex(grailArray, scc, 5, 0);
+	isReachableGrailIndex(grailArray, scc, 6, 3);
+	isReachableGrailIndex(grailArray, scc, 6, 1);
+	isReachableGrailIndex(grailArray, scc, 8, 2);
+	*/
 
 	//hyperGraphStruct* hyperGraph = createHyperGraph(buffer, index, scc);
 	//printf("\n(vgika apo createHyperGraph)\n");
 	//destroyHyperGraph(hyperGraph, scc->components_count);
-	destroyGrailIndex(grail);
-	free(grail);
+	destroyGrailIndex(grailArray);
+	free(grailArray);
 	printf("\nGrail has been destroyed\n");
 	return 0;
 	//telos example gia to grail.

@@ -71,6 +71,6 @@ int minRankOfChildren(int , hyperGraphStruct *);
 int grailExpand(int , hyperGraphStruct *, grailFront *);
 
 grailIndex* buildGrailIndex(NodeIndex *, Buffer *, SCC *);
-int isReachableGrailIndex(grailIndex *, SCC *, int , int );
-void destroyGrailIndex(grailIndex *);
+int isReachableGrailIndex(grailIndex **, SCC *, int , int );
+void destroyGrailIndex(grailIndex **);
 #endif	
