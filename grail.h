@@ -22,13 +22,15 @@ typedef struct hyperGraphStruct
 	//strongNeighbors
 	int *strongNeighbors;
 	int size;
-	int nextAvailablePos;
+	int nextAvailablePos;	//einai kai gia ton randIndex, parallila
 
 	//grail
 	int minRank;
 	int rank;
 	int parent;
 	int unvisitedChildren;
+
+	int *randIndex;
 		
 }hyperGraphStruct;
 

@@ -23,7 +23,7 @@
 hyperGraphStruct* createHyperGraph(Buffer* buffer, NodeIndex* index, SCC* sccPtr)
 {
 	int i, j, k, offset, sccID, nodeToCheck, flag, indexSize, nextAvailablePos;
-	int *newstrongNeighborsIndex, *newStrongNeighbors;
+	int *newstrongNeighborsIndex, *newStrongNeighbors, *newRandIndex;
 	uint32_t *includedNodeIds;
 	hyperGraphStruct *hyperGraphArray;
 	Component *comp;
@@ -35,15 +35,17 @@ hyperGraphStruct* createHyperGraph(Buffer* buffer, NodeIndex* index, SCC* sccPtr
 	//initialization
 	for(i=0; i<sccPtr->components_count; i++)
 	{
-		hyperGraphArray[i].strongNeighborsIndex = malloc(5*sizeof(int));
-		hyperGraphArray[i].strongNeighbors = malloc(5*sizeof(int));
+		hyperGraphArray[i].strongNeighborsIndex = malloc(1*sizeof(int));
+		hyperGraphArray[i].strongNeighbors = malloc(1*sizeof(int));
+		hyperGraphArray[i].randIndex = malloc(1*sizeof(int));
 		for(j=0; j<5; j++)
 		{
 			hyperGraphArray[i].strongNeighborsIndex[j] = 0;
-			hyperGraphArray[i].strongNeighbors[j] = -1;
+			//hyperGraphArray[i].strongNeighbors[j] = -1;
+			//hyperGraphArray[i].randIndex[j] = 0;	
 		}
-		hyperGraphArray[i].indexSize = 5;
-		hyperGraphArray[i].size = 5;
+		hyperGraphArray[i].indexSize = 1;
+		hyperGraphArray[i].size = 1;
 		hyperGraphArray[i].nextAvailablePos = 0;
 
 		//grail
@@ -112,10 +114,15 @@ hyperGraphStruct* createHyperGraph(Buffer* buffer, NodeIndex* index, SCC* sccPtr
 					    {
 					    	printf("strongNeighbors is full (realloc)\n");
 					    	hyperGraphArray[i].size = 2*hyperGraphArray[i].size;
+
 					    	newStrongNeighbors = realloc(hyperGraphArray[i].strongNeighbors, hyperGraphArray[i].size * sizeof(int));
 					    	hyperGraphArray[i].strongNeighbors = newStrongNeighbors;
+
+					    	newRandIndex = realloc(hyperGraphArray[i].randIndex, hyperGraphArray[i].size * sizeof(int));
+					    	hyperGraphArray[i].randIndex = newRandIndex;
 					    }
 					    hyperGraphArray[i].strongNeighbors[nextAvailablePos] = sccID;
+					    hyperGraphArray[i].randIndex[nextAvailablePos] = 0;
 					    hyperGraphArray[i].nextAvailablePos++;
 						continue;
 					}
@@ -129,10 +136,15 @@ hyperGraphStruct* createHyperGraph(Buffer* buffer, NodeIndex* index, SCC* sccPtr
 					    {
 					    	printf("strongNeighbors is full (realloc)\n");
 					    	hyperGraphArray[i].size = 2*hyperGraphArray[i].size;
+
 					    	newStrongNeighbors = realloc(hyperGraphArray[i].strongNeighbors, hyperGraphArray[i].size * sizeof(int));
 					    	hyperGraphArray[i].strongNeighbors = newStrongNeighbors;
+
+					    	newRandIndex = realloc(hyperGraphArray[i].randIndex, hyperGraphArray[i].size * sizeof(int));
+					    	hyperGraphArray[i].randIndex = newRandIndex;
 					    }
 					    hyperGraphArray[i].strongNeighbors[nextAvailablePos] = sccID;
+					    hyperGraphArray[i].randIndex[nextAvailablePos] = 0;
 					    hyperGraphArray[i].nextAvailablePos++;
 					}
 					else
@@ -160,6 +172,7 @@ void destroyHyperGraph(hyperGraphStruct* hyperGraph, int components_count)
 	{
 		free(hyperGraph[i].strongNeighbors);
 		free(hyperGraph[i].strongNeighborsIndex);
+		free(hyperGraph[i].randIndex);
 	}
 	free(hyperGraph);
 	//printf("\nhyperGraph has been destroyed.\n");
@@ -241,15 +254,19 @@ int minRankOfChildren(int sccID, hyperGraphStruct *hyperGraph)	//efarmozetai se 
 
 int grailExpand(int sccID, hyperGraphStruct *hyperGraph, grailFront *frontier)
 {
-	int i, strongNeighbor, unvisitedChildren;
+	int i, strongNeighbor, unvisitedChildren, randNeighborPos, nextAvailablePos;
 
-	if(hyperGraph[sccID].nextAvailablePos == 0)		//simainei oti den exei paidia/geitones
+	printf("\n");
+	nextAvailablePos = hyperGraph[sccID].nextAvailablePos;
+	if(nextAvailablePos == 0)		//simainei oti den exei paidia/geitones
 	{
 		//printf("scc: %d does not have any neighbors\n", sccID);
 		unvisitedChildren = -1;
 		return unvisitedChildren;
 	}
+
 	unvisitedChildren = 0;
+	/*
 	for(i=0; i<hyperGraph[sccID].nextAvailablePos; i++)
 	{
 		strongNeighbor = hyperGraph[sccID].strongNeighbors[i];
@@ -259,6 +276,32 @@ int grailExpand(int sccID, hyperGraphStruct *hyperGraph, grailFront *frontier)
 			hyperGraph[strongNeighbor].parent = sccID;
 			pushFrontier(strongNeighbor, sccID, frontier);	//to sccID edo dilonei parent tou strongNeighbor
 		}
+	}
+	hyperGraph[sccID].unvisitedChildren = unvisitedChildren;
+	return unvisitedChildren;
+	*/
+	i = 0;
+	while(i < nextAvailablePos)
+	{
+		randNeighborPos = rand() % nextAvailablePos;
+		printf("randNeighborPos: %d -> strongNeighbors[%d] = ", randNeighborPos, randNeighborPos);
+		if(hyperGraph[sccID].randIndex[randNeighborPos] == 0)
+		{
+			
+			hyperGraph[sccID].randIndex[randNeighborPos] = 1;
+			strongNeighbor = hyperGraph[sccID].strongNeighbors[randNeighborPos];
+			printf("%d accepted.\n", strongNeighbor);
+			if( hyperGraph[strongNeighbor].minRank == 0 && hyperGraph[strongNeighbor].rank == 0)	//einai unvisited
+			{
+				unvisitedChildren++;
+				hyperGraph[strongNeighbor].parent = sccID;
+				pushFrontier(strongNeighbor, sccID, frontier);	//to sccID edo dilonei parent tou strongNeighbor
+				
+			}
+			i++;
+		}
+		else
+			printf("denied(already picked).\n");
 	}
 	hyperGraph[sccID].unvisitedChildren = unvisitedChildren;
 	return unvisitedChildren;
@@ -287,8 +330,8 @@ grailIndex* buildGrailIndex(NodeIndex *index, Buffer *buffer, SCC *sccPtr)
 	//frontier initialization
 	grail -> frontier = malloc(sizeof(grailFront));
 	frontier = grail -> frontier;
-	frontier -> frontArray = malloc(10*sizeof(frontierEntry));
-	frontier -> size = 10;
+	frontier -> frontArray = malloc(1*sizeof(frontierEntry));
+	frontier -> size = 1;
 	frontier -> last = -1;
 	printf("Frontier creation and initialization completed.\n");
 
