@@ -8,7 +8,7 @@
 #include "grail.h"
 #define STRLEN 1024
 #define numOfGrails 3
-#define N 10
+#define N 1
 
 
 int main(int argc,char* argv[])

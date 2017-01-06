@@ -10,7 +10,7 @@
 #include "definition.h"
 #include "SCC.h"
 #define STRLEN 1024
-#define N 10
+#define N 1
 #define HASH 200
 
 typedef struct hyperGraphStruct

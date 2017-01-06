@@ -5,7 +5,7 @@
 #include <errno.h>
 #include "Bfs.h"
 #define STRLEN 1024
-#define N 10
+#define N 1
 
 int testInput()
 {

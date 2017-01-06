@@ -11,7 +11,7 @@
 #define FRONTLEN 5
 #define EDGELEN 3
 #define numOfGrails 3
-#define N 10
+#define N 1
 
 
 //prosoxi sta uint32_t vs int aplo.

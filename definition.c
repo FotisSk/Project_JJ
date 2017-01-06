@@ -5,7 +5,7 @@
 #include <string.h>
 #include <errno.h>
 #define STRLEN 1024
-#define N 10
+#define N 1
 
 NodeIndex* createNodeIndex()
 {
