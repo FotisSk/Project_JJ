@@ -245,31 +245,36 @@ int main(int argc,char* argv[])
 	scc -> id_belongs_to_component[17] = 7;
 	scc -> id_belongs_to_component[18] = 7;
 
+	printf("Starting hyperGraph creation.\n\n");
+	hyperGraphStruct *hyperGraph = createHyperGraph(buffer, index, scc);
+	printf("Finished hyperGraph creation.\n");
+
+	printf("Starting grail creation.\n\n");
 	int i;
-	grailIndex *grail;
-	grailIndex **grailArray;
+	grailIndex *grail, **grailStorage;
+
 
 	srand(time(NULL));
-	grailArray = malloc(numOfGrails * sizeof(grailIndex));
+	grailStorage = malloc(numOfGrails * sizeof(grailIndex));
 	for(i=0; i<numOfGrails; i++)
 	{
-		grail = buildGrailIndex(index, buffer, scc);
-		grailArray[i] = grail;
+		grail = buildGrailIndex(index, buffer, scc, hyperGraph);
+		grailStorage[i] = grail;
 	}
 	printf("\nGrail construction has been completed.\n");
 
 
-	isReachableGrailIndex(grailArray, scc, 6, 0);
-	isReachableGrailIndex(grailArray, scc, 3, 6);
-	isReachableGrailIndex(grailArray, scc, 4, 1);
-	isReachableGrailIndex(grailArray, scc, 5, 9);
-	isReachableGrailIndex(grailArray, scc, 9, 15);
-	isReachableGrailIndex(grailArray, scc, 9, 14);
-	isReachableGrailIndex(grailArray, scc, 13, 14);
-	isReachableGrailIndex(grailArray, scc, 12, 10);
-	isReachableGrailIndex(grailArray, scc, 17, 7);
-	isReachableGrailIndex(grailArray, scc, 12, 1);
-	isReachableGrailIndex(grailArray, scc, 14, 7);
+	isReachableGrailIndex(grailStorage, scc, 6, 0);
+	isReachableGrailIndex(grailStorage, scc, 3, 6);
+	isReachableGrailIndex(grailStorage, scc, 4, 1);
+	isReachableGrailIndex(grailStorage, scc, 5, 9);
+	isReachableGrailIndex(grailStorage, scc, 9, 15);
+	isReachableGrailIndex(grailStorage, scc, 9, 14);
+	isReachableGrailIndex(grailStorage, scc, 13, 14);
+	isReachableGrailIndex(grailStorage, scc, 12, 10);
+	isReachableGrailIndex(grailStorage, scc, 17, 7);
+	isReachableGrailIndex(grailStorage, scc, 12, 1);
+	isReachableGrailIndex(grailStorage, scc, 14, 7);
 	/*
 	isReachableGrailIndex(grailArray, scc, 0, 1);
 	isReachableGrailIndex(grailArray, scc, 1, 0);
@@ -296,8 +301,9 @@ int main(int argc,char* argv[])
 	//hyperGraphStruct* hyperGraph = createHyperGraph(buffer, index, scc);
 	//printf("\n(vgika apo createHyperGraph)\n");
 	//destroyHyperGraph(hyperGraph, scc->components_count);
-	destroyGrailIndex(grailArray);
-	free(grailArray);
+	destroyHyperGraph(hyperGraph, scc->components_count);
+	destroyGrailIndex(grailStorage);
+	free(grailStorage);
 	printf("\nGrail has been destroyed\n");
 	return 0;
 	//telos example gia to grail.

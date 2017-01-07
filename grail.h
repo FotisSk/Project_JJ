@@ -25,12 +25,12 @@ typedef struct hyperGraphStruct
 	int nextAvailablePos;	//einai kai gia ton randIndex, parallila
 
 	//grail
-	int minRank;
-	int rank;
-	int parent;
-	int unvisitedChildren;
+	//int minRank;
+	//int rank;
+	//int parent;
+	//int unvisitedChildren;
 
-	int *randIndex;
+	//int *randIndex;
 		
 }hyperGraphStruct;
 
@@ -55,24 +55,36 @@ typedef struct grailStack
 	int last;
 }grailStack;
 
+typedef struct grailStruct
+{
+	int minRank;
+	int rank;
+	int parent;
+	int unvisitedChildren;
+
+	int *randIndex;
+	int randIndexSize;
+}grailStruct;
+
 typedef struct grailIndex
 {
 	int index;
 	int size;
-	hyperGraphStruct *hyperGraph;
 	grailFront *frontier;
+	grailStruct *grailArray;
+
 }grailIndex;
 
 
-hyperGraphStruct* createHyperGraph(Buffer* , NodeIndex* , SCC* );
+hyperGraphStruct* createHyperGraph(Buffer* , NodeIndex* , SCC*);
 void destroyHyperGraph(hyperGraphStruct* , int );
 
 void pushFrontier(int , int, grailFront *);
 frontierEntry popFrontier(grailFront *);
-int minRankOfChildren(int , hyperGraphStruct *);
-int grailExpand(int , hyperGraphStruct *, grailFront *);
+int minRankOfChildren(int , hyperGraphStruct *, grailStruct *);
+int grailExpand(int , hyperGraphStruct *, grailFront *, grailStruct *);
 
-grailIndex* buildGrailIndex(NodeIndex *, Buffer *, SCC *);
+grailIndex* buildGrailIndex(NodeIndex *, Buffer *, SCC *, hyperGraphStruct *);
 int isReachableGrailIndex(grailIndex **, SCC *, int , int );
 void destroyGrailIndex(grailIndex **);
 #endif	
