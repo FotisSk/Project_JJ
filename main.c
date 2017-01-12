@@ -73,7 +73,7 @@ int main(int argc,char* argv[])
 	if(!strcmp(mode, "F"))
 	{
 */
-		fp=fopen("grailTest2.txt", "r");
+		fp=fopen("smallGraph.txt", "r");
 
 		if(fp==NULL)
 		{

@@ -54,17 +54,17 @@ hyperGraphStruct* createHyperGraph(Buffer* buffer, NodeIndex* index, SCC* sccPtr
 		includedNodeIds = comp[i].included_node_ids;
 		for(j=0; j< comp[i].included_nodes_count; j++)	//gia kathe thesi  tou included_node_ids pou dn exei skoupidia ->
 		{
-			printf("\nj: %d\n", j);
-			printf("node: %d\n", includedNodeIds[j]);
+			//printf("\nj: %d\n", j);
+			//printf("node: %d\n", includedNodeIds[j]);
 			if(includedNodeIds[j] >= indexSize)
 			{
-				printf("Node: %d doesn't have any neighbors (also out of bounds of the outgoing index array).\n", includedNodeIds[j]);
+				//printf("Node: %d doesn't have any neighbors (also out of bounds of the outgoing index array).\n", includedNodeIds[j]);
 				continue;
 			}
 			offset = index_array[includedNodeIds[j]].offset;
 			if(offset == -1)
 			{
-				printf("node: %d doesn't have any neighbors.\n", includedNodeIds[j]);
+				//printf("node: %d doesn't have any neighbors.\n", includedNodeIds[j]);
 				continue;
 			}
 			//tora pou exeis to offset pigene ston buffer array kai elenkse olous tous geitones.
@@ -78,17 +78,17 @@ hyperGraphStruct* createHyperGraph(Buffer* buffer, NodeIndex* index, SCC* sccPtr
 					sccID = sccPtr -> id_belongs_to_component[nodeToCheck];	//ara o k geitonas tou komvou sti thesi j tou included_node_ids anikei sti sscID isxira sinektiki sinistosa.
 					if(sccID == comp[i].component_id)
 					{
-						printf("neighbor node: %d belongs to the same scc as node: %d\n", nodeToCheck, includedNodeIds[j]);
+						//printf("neighbor node: %d belongs to the same scc as node: %d\n", nodeToCheck, includedNodeIds[j]);
 						continue;
 					}
 
-					printf("neighbor node: %d belongs to the scc: %d\n", nodeToCheck, sccID);
+					//printf("neighbor node: %d belongs to the scc: %d\n", nodeToCheck, sccID);
 					//prota prepei na tsekaroume ton komvo se sxesi me to megethos tou strongNeighborsIndex[]. ton exo na leitourgei san hash (px 1h thesi: 0,1 analoga an exei geitona tin 1h sinistosa)
 					
 					
 					if(sccID >= hyperGraphArray[i].indexSize)
 					{
-						printf("sccID: %d is bigger than strongNeighborsIndex's size. (realloc)\n", sccID);	
+						//printf("sccID: %d is bigger than strongNeighborsIndex's size. (realloc)\n", sccID);	
 						while(sccID >= hyperGraphArray[i].indexSize)
 						{
 							hyperGraphArray[i].indexSize = 2*hyperGraphArray[i].indexSize;
@@ -96,7 +96,7 @@ hyperGraphStruct* createHyperGraph(Buffer* buffer, NodeIndex* index, SCC* sccPtr
 						newstrongNeighborsIndex = realloc(hyperGraphArray[i].strongNeighborsIndex, hyperGraphArray[i].indexSize * sizeof(int));
 						if (newstrongNeighborsIndex == NULL)
 						{
-							printf("realloc returned NULL.1\n");
+							//printf("realloc returned NULL.1\n");
 							return 0;
 						}
 						hyperGraphArray[i].strongNeighborsIndex = newstrongNeighborsIndex;
@@ -110,17 +110,17 @@ hyperGraphStruct* createHyperGraph(Buffer* buffer, NodeIndex* index, SCC* sccPtr
 
 						//stin periptosi auti einai sigouro oti den iparxei idi auti i scc sto pinakaki mas ton strongNeighborsIndex, opote pamekai ti vazoume
 						hyperGraphArray[i].strongNeighborsIndex[sccID] = 1;
-						printf("Thesi ston hyperGraphArray: %d, scc: %d added as strongNeighbor of scc: %d.\n",i, sccID, comp[i].component_id);
+						//printf("Thesi ston hyperGraphArray: %d, scc: %d added as strongNeighbor of scc: %d.\n",i, sccID, comp[i].component_id);
 					    nextAvailablePos = hyperGraphArray[i].nextAvailablePos;
 					    if(nextAvailablePos >= hyperGraphArray[i].size)
 					    {
-					    	printf("strongNeighbors is full (realloc)\n");
+					    	//printf("strongNeighbors is full (realloc)\n");
 					    	hyperGraphArray[i].size = 2*hyperGraphArray[i].size;
 
 					    	newStrongNeighbors = realloc(hyperGraphArray[i].strongNeighbors, hyperGraphArray[i].size * sizeof(int));
 					    	if (newStrongNeighbors == NULL)
 							{	
-								printf("realloc returned NULL.2\n");
+								//printf("realloc returned NULL.2\n");
 								return 0;
 							}
 					    	hyperGraphArray[i].strongNeighbors = newStrongNeighbors;
@@ -149,17 +149,17 @@ hyperGraphStruct* createHyperGraph(Buffer* buffer, NodeIndex* index, SCC* sccPtr
 					if(hyperGraphArray[i].strongNeighborsIndex[sccID] == 0)
 					{
 						hyperGraphArray[i].strongNeighborsIndex[sccID] = 1;
-						printf("Thesi ston hyperGraphArray: %d, scc: %d added as strongNeighbor of scc: %d.\n",i, sccID, comp[i].component_id);
+						//printf("Thesi ston hyperGraphArray: %d, scc: %d added as strongNeighbor of scc: %d.\n",i, sccID, comp[i].component_id);
 						nextAvailablePos = hyperGraphArray[i].nextAvailablePos;
 					    if(nextAvailablePos >= hyperGraphArray[i].size)
 					    {
-					    	printf("strongNeighbors is full (realloc)\n");
+					    	//printf("strongNeighbors is full (realloc)\n");
 					    	hyperGraphArray[i].size = 2*hyperGraphArray[i].size;
 
 					    	newStrongNeighbors = realloc(hyperGraphArray[i].strongNeighbors, hyperGraphArray[i].size * sizeof(int));
 					    	if (newStrongNeighbors == NULL)
 							{
-								printf("realloc returned NULL.3\n");
+								//printf("realloc returned NULL.3\n");
 								return 0;
 							}
 					    	hyperGraphArray[i].strongNeighbors = newStrongNeighbors;
@@ -168,8 +168,8 @@ hyperGraphStruct* createHyperGraph(Buffer* buffer, NodeIndex* index, SCC* sccPtr
 					    hyperGraphArray[i].strongNeighbors[nextAvailablePos] = sccID;
 					    hyperGraphArray[i].nextAvailablePos++;
 					}
-					else
-						printf("Thesi ston hyperGraphArray: %d, strongNeighbor %d already exists.\n",i, sccID);
+					//else
+						//printf("Thesi ston hyperGraphArray: %d, strongNeighbor %d already exists.\n",i, sccID);
 				}//for k
 				if(buffer_array[offset].nextListNode == -1)
 					flag = 1;
@@ -257,7 +257,7 @@ int grailExpand(int sccID, hyperGraphStruct *hyperGraph, grailFront *frontier, g
 {
 	int i, strongNeighbor, unvisitedChildren, randNeighborPos, nextAvailablePos;
 
-	printf("\n");
+	//printf("\n");
 	nextAvailablePos = hyperGraph[sccID].nextAvailablePos;
 	if(nextAvailablePos == 0)		//simainei oti den exei paidia/geitones
 	{
@@ -281,7 +281,7 @@ int grailExpand(int sccID, hyperGraphStruct *hyperGraph, grailFront *frontier, g
 			//printf("%d accepted.\n", strongNeighbor);
 			if( grailArray[strongNeighbor].minRank == 0 && grailArray[strongNeighbor].rank == 0)	//einai unvisited
 			{
-				printf("^strongNeighbor: %d pushed to the frontier.\n", strongNeighbor);
+				//printf("^strongNeighbor: %d pushed to the frontier.\n", strongNeighbor);
 				unvisitedChildren++;
 				grailArray[strongNeighbor].parent = sccID;
 				pushFrontier(strongNeighbor, sccID, frontier);	//to sccID edo dilonei parent tou strongNeighbor
@@ -342,35 +342,35 @@ grailIndex* buildGrailIndex(NodeIndex *index, Buffer *buffer, SCC *sccPtr, hyper
 	unvisitedComponent = gsize;		//visit/eksereunimeno = na parei timi to (minRank, rank)
 	while(unvisitedComponent != 0)
 	{
-		printf("\nUnvisited Components: %d\n", unvisitedComponent);
+		//printf("\nUnvisited Components: %d\n", unvisitedComponent);
 		randomComp = rand() % gsize;
 		while(grailArray[randomComp].minRank != 0 || grailArray[randomComp].rank != 0)
 			randomComp = rand() % gsize;
 
-		printf("randomComp: %d\n", randomComp);
+		//printf("randomComp: %d\n", randomComp);
 		pushFrontier(randomComp, -1, frontier); //-1 h hyperGraph[randomComp].parent pou einai pali -1 stin arxi.
 		while(frontier -> last != -1)	//oso to frontier DEN einai adeio
 		{
 			entry = popFrontier(frontier);
 			sccID = entry.sccID;
-			printf("*popped sccID: %d", sccID);
+			//printf("*popped sccID: %d", sccID);
 			if(grailArray[sccID].minRank != 0 || grailArray[sccID].rank != 0) //na testaristei to paradeigma sto xarti. thelei auto + elegxo stin expand an exei idi timi o pateras na tou meiosei to unvisited. prosoxi 358 break.
 			{
-				printf("^already visited by parent: %d\n", grailArray[sccID].parent);
+				//printf("^already visited by parent: %d\n", grailArray[sccID].parent);
 				sccID = entry.parent;
 				grailArray[sccID].unvisitedChildren--;
 			}
 			else
 			{
 				expandResult = grailExpand(sccID, hyperGraph, frontier, grailArray);
-				printf("^expandResult: %d\n", expandResult);
+				//printf("^expandResult: %d\n", expandResult);
 				if(expandResult == -1)	//an den exei katholou paidia
 				{
 					grailArray[sccID].rank = grail -> index;
 					grailArray[sccID].minRank = grail -> index;
 					unvisitedComponent--;
 					grail -> index = (grail -> index) + 1;
-					printf("sccID: %d (minRank, rank) = (%d, %d)\n", sccID, grailArray[sccID].minRank, grailArray[sccID].rank);
+					//printf("sccID: %d (minRank, rank) = (%d, %d)\n", sccID, grailArray[sccID].minRank, grailArray[sccID].rank);
 					if(sccID != randomComp)
 					{
 						sccID = grailArray[sccID].parent;
@@ -386,7 +386,7 @@ grailIndex* buildGrailIndex(NodeIndex *index, Buffer *buffer, SCC *sccPtr, hyper
 					grailArray[sccID].minRank = minRankOfChildren(sccID, hyperGraph, grailArray);
 					grailArray[sccID].rank = grail -> index;
 					grail -> index = (grail -> index) + 1;
-					printf("sccID: %d (minRank, rank) = (%d, %d)\n", sccID, grailArray[sccID].minRank, grailArray[sccID].rank);
+					//printf("sccID: %d (minRank, rank) = (%d, %d)\n", sccID, grailArray[sccID].minRank, grailArray[sccID].rank);
 					unvisitedComponent--;
 					//pare ton patera, an den einai o pateras o idios, kai meiose ta unvisitedChildren tou kata 1
 					if(sccID != randomComp)
