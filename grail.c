@@ -38,7 +38,7 @@ hyperGraphStruct* createHyperGraph(Buffer* buffer, NodeIndex* index, SCC* sccPtr
 		hyperGraphArray[i].strongNeighborsIndex = malloc(1*sizeof(int));
 		hyperGraphArray[i].strongNeighbors = malloc(1*sizeof(int));
 		//hyperGraphArray[i].randIndex = malloc(1*sizeof(int));
-		for(j=0; j<5; j++)
+		for(j=0; j<1; j++)
 		{
 			hyperGraphArray[i].strongNeighborsIndex[j] = 0;
 			//hyperGraphArray[i].strongNeighbors[j] = -1;
