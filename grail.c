@@ -19,26 +19,30 @@
 /********************************************** HYPERGRAPH ***********************************************/
 hyperGraphStruct* createHyperGraph(Buffer* buffer, NodeIndex* index, SCC* sccPtr)
 {
-	int i, j, k, l, offset, sccID, nodeToCheck, flag, indexSize, nextAvailablePos;
-	int *newstrongNeighborsIndex, *newStrongNeighbors, *newRandIndex;
+	int i, j, k, l, offset, sccID, nodeToCheck, flag, indexSize, nextAvailablePos, neighborIndexSize, oldNeighborIndexSize;
+	int *newStrongNeighbors, *neighborIndex;
 	uint32_t *includedNodeIds;
 	hyperGraphStruct *hyperGraphArray;
 	Component *comp;
 	indexStruct *index_array;
 	list_node *buffer_array;
 
-	//creation
+	//creation and initialization
 	hyperGraphArray = malloc(sccPtr->components_count*sizeof(hyperGraphStruct));
-	//initialization
+
+	oldNeighborIndexSize = 1;
+	neighborIndexSize = 1;
+	neighborIndex = malloc(neighborIndexSize*sizeof(int));
+	for(i=0; i<neighborIndexSize; i++)
+		neighborIndex[i] = -1;
+
 	for(i=0; i<sccPtr->components_count; i++)
 	{
-		//hyperGraphArray[i].strongNeighborsIndex = malloc(10*sizeof(int));
-		hyperGraphArray[i].strongNeighbors = malloc(10*sizeof(int));
-
-		
+		hyperGraphArray[i].strongNeighbors = malloc(1*sizeof(int));
 		hyperGraphArray[i].size = 1;
 		hyperGraphArray[i].nextAvailablePos = 0;
 	}
+	//^
 
 	buffer_array = buffer -> buffer_array;
 	index_array = index -> index_array;
@@ -46,11 +50,6 @@ hyperGraphStruct* createHyperGraph(Buffer* buffer, NodeIndex* index, SCC* sccPtr
 	comp = sccPtr -> components;
 	for(i=0; i<sccPtr->components_count; i++)	//gia kathe thesi tou pinaka components ->
 	{
-		hyperGraphArray[i].strongNeighborsIndex = malloc(1*sizeof(int));
-		hyperGraphArray[i].strongNeighborsIndex[0] = 0;
-		hyperGraphArray[i].indexSize = 1;
-		hyperGraphArray[i].oldIndexSize = 1;
-
 		includedNodeIds = comp[i].included_node_ids;
 		for(j=0; j< comp[i].included_nodes_count; j++)	//gia kathe thesi  tou included_node_ids pou dn exei skoupidia ->
 		{
@@ -86,30 +85,28 @@ hyperGraphStruct* createHyperGraph(Buffer* buffer, NodeIndex* index, SCC* sccPtr
 					//prota prepei na tsekaroume ton komvo se sxesi me to megethos tou strongNeighborsIndex[]. ton exo na leitourgei san hash (px 1h thesi: 0,1 analoga an exei geitona tin 1h sinistosa)
 					
 					
-					if(sccID >= hyperGraphArray[i].indexSize)
+					if(sccID >= neighborIndexSize)
 					{
 						//printf("sccID: %d is bigger than strongNeighborsIndex's size. (realloc)\n", sccID);	
-						while(sccID >= hyperGraphArray[i].indexSize)
+						while(sccID >= neighborIndexSize)
 						{
-							hyperGraphArray[i].indexSize = 2*hyperGraphArray[i].indexSize;
+							neighborIndexSize = 2*neighborIndexSize;
 						}
-						newstrongNeighborsIndex = realloc(hyperGraphArray[i].strongNeighborsIndex, hyperGraphArray[i].indexSize * sizeof(int));
-						if (newstrongNeighborsIndex == NULL)
+						neighborIndex = realloc(neighborIndex, neighborIndexSize * sizeof(int));
+						if (neighborIndex == NULL)
 						{
 							//printf("realloc returned NULL.1\n");
 							return 0;
 						}
-						hyperGraphArray[i].strongNeighborsIndex = newstrongNeighborsIndex;
 
 						//arxikopoioume me 0
-						for(l= hyperGraphArray[i].oldIndexSize; l<hyperGraphArray[i].indexSize; l++)
-						{
-							hyperGraphArray[i].strongNeighborsIndex[l] = 0;
-						}
-						hyperGraphArray[i].oldIndexSize = hyperGraphArray[i].indexSize;
+						for(l=oldNeighborIndexSize; l<neighborIndexSize; l++)
+							neighborIndex[l] = -1;
+						
+						oldNeighborIndexSize = neighborIndexSize;
 
 						//stin periptosi auti einai sigouro oti den iparxei idi auti i scc sto pinakaki mas ton strongNeighborsIndex, opote pamekai ti vazoume
-						hyperGraphArray[i].strongNeighborsIndex[sccID] = 1;
+						neighborIndex[sccID] = i;
 						//printf("Thesi ston hyperGraphArray: %d, scc: %d added as strongNeighbor of scc: %d.\n",i, sccID, comp[i].component_id);
 					    nextAvailablePos = hyperGraphArray[i].nextAvailablePos;
 					    if(nextAvailablePos >= hyperGraphArray[i].size)
@@ -146,9 +143,9 @@ hyperGraphStruct* createHyperGraph(Buffer* buffer, NodeIndex* index, SCC* sccPtr
 					*/
 					//telos grammikis
 
-					if(hyperGraphArray[i].strongNeighborsIndex[sccID] == 0)
+					if(neighborIndex[sccID] != i)
 					{
-						hyperGraphArray[i].strongNeighborsIndex[sccID] = 1;
+						neighborIndex[sccID] = i;
 						//printf("Thesi ston hyperGraphArray: %d, scc: %d added as strongNeighbor of scc: %d.\n",i, sccID, comp[i].component_id);
 						nextAvailablePos = hyperGraphArray[i].nextAvailablePos;
 					    if(nextAvailablePos >= hyperGraphArray[i].size)
@@ -180,8 +177,8 @@ hyperGraphStruct* createHyperGraph(Buffer* buffer, NodeIndex* index, SCC* sccPtr
 				}
 			}//while flag
 		}//for j
-		free(hyperGraphArray[i].strongNeighborsIndex);
 	}//for i
+	free(neighborIndex);
 	return hyperGraphArray;
 }
 
@@ -193,7 +190,6 @@ void destroyHyperGraph(hyperGraphStruct* hyperGraph, int components_count)
 	for(i=0; i<components_count; i++)
 	{
 		free(hyperGraph[i].strongNeighbors);
-		//free(hyperGraph[i].strongNeighborsIndex);
 	}
 	free(hyperGraph);
 	//printf("\nhyperGraph has been destroyed.\n");
@@ -231,7 +227,7 @@ frontierEntry popFrontier(grailFront *frontier)
 	}
 	else
 	{
-		printf("Frontier is empty!\n");
+		//printf("Frontier is empty!\n");
 	}
 }
 
@@ -270,15 +266,13 @@ int grailExpand(int sccID, hyperGraphStruct *hyperGraph, grailFront *frontier, g
 	i = 0;
 	while(i < nextAvailablePos)
 	{
-		//printf("%d\n", i);
 		randNeighborPos = rand() % nextAvailablePos;
-		//printf("randNeighborPos: %d -> strongNeighbors[%d] = ", randNeighborPos, randNeighborPos);
+		//printf("(%d)\n", randNeighborPos);
 		if(grailArray[sccID].randIndex[randNeighborPos] == 0)
 		{
 			
 			grailArray[sccID].randIndex[randNeighborPos] = 1;
 			strongNeighbor = hyperGraph[sccID].strongNeighbors[randNeighborPos];
-			//printf("%d accepted.\n", strongNeighbor);
 			if( grailArray[strongNeighbor].minRank == 0 && grailArray[strongNeighbor].rank == 0)	//einai unvisited
 			{
 				//printf("^strongNeighbor: %d pushed to the frontier.\n", strongNeighbor);
@@ -353,10 +347,10 @@ grailIndex* buildGrailIndex(NodeIndex *index, Buffer *buffer, SCC *sccPtr, hyper
 		{
 			entry = popFrontier(frontier);
 			sccID = entry.sccID;
-			//printf("*popped sccID: %d", sccID);
+			//printf("\n*popped sccID: %d", sccID);
 			if(grailArray[sccID].minRank != 0 || grailArray[sccID].rank != 0) //na testaristei to paradeigma sto xarti. thelei auto + elegxo stin expand an exei idi timi o pateras na tou meiosei to unvisited. prosoxi 358 break.
 			{
-				//printf("^already visited by parent: %d\n", grailArray[sccID].parent);
+				//printf(", already visited by parent: %d\n", grailArray[sccID].parent);
 				sccID = entry.parent;
 				grailArray[sccID].unvisitedChildren--;
 			}

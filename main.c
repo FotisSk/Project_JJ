@@ -14,7 +14,7 @@
 
 int main(int argc,char* argv[])
 {
-	clock_t begin=clock();
+	//clock_t begin=clock();
 
 	if( argc != 2 )
 	{
@@ -73,7 +73,7 @@ int main(int argc,char* argv[])
 	if(!strcmp(mode, "F"))
 	{
 */
-		fp=fopen("smallGraph.txt", "r");
+		fp=fopen("mediumGraph.txt", "r");
 
 		if(fp==NULL)
 		{
@@ -210,6 +210,7 @@ int main(int argc,char* argv[])
 
 	printf("Prin ton tarjan \n");
 	tarjan(index, index2, buffer, buffer2, scc);
+	/*
 	for (int i = 0; i < scc->components_count; i++) {
 		scc->components[i].component_id;
 		printf("Component No: %d \n", i);
@@ -217,20 +218,27 @@ int main(int argc,char* argv[])
 			printf(" Node %d \n", scc->components[i].included_node_ids[y]);
 		}
 	}
+	*/
 	printf("Bghka apo ton Tarjan \n");
 
 	//grail arxi
 	
+	//clock_t begin=clock();
 
 	printf("Starting hyperGraph creation.\n\n");
 	hyperGraphStruct *hyperGraph = createHyperGraph(buffer, index, scc);
 	printf("Finished hyperGraph creation.\n");
 
-	printf("Starting grail creation.\n\n");
+	///clock_t end = clock();
+	//double time_spent=(double)(end-begin);
+    //printf("Program Duration: %f \n",(time_spent/CLOCKS_PER_SEC) );
+	//printf("Starting grail creation.\n\n");
+
 	int i;
 	grailIndex *grail, **grailStorage;
 
-
+	clock_t begin=clock();
+	
 	srand(time(NULL));
 	grailStorage = malloc(numOfGrails * sizeof(grailIndex));
 	for(i=0; i<numOfGrails; i++)
@@ -239,6 +247,12 @@ int main(int argc,char* argv[])
 		grailStorage[i] = grail;
 	}
 	printf("\nGrail construction has been completed.\n");
+
+	clock_t end = clock();
+	double time_spent=(double)(end-begin);
+    printf("Program Duration: %f \n",(time_spent/CLOCKS_PER_SEC) );
+	printf("Starting grail creation.\n\n");
+
 
 	isReachableGrailIndex(grailStorage, scc, 6, 0);
 	isReachableGrailIndex(grailStorage, scc, 3, 6);
@@ -256,6 +270,11 @@ int main(int argc,char* argv[])
 	destroyGrailIndex(grailStorage);
 	free(grailStorage);
 	printf("\nGrail has been destroyed\n");
+
+	//clock_t end = clock();
+	//double time_spent=(double)(end-begin);
+    //printf("Program Duration: %f \n",(time_spent/CLOCKS_PER_SEC) );
+
 	//grail telos
 	return 0;
 
@@ -331,6 +350,14 @@ int main(int argc,char* argv[])
 						insertNode( index , buffer, node1, node2);
 						insertNode( index2 , buffer2, node2, node1);
 					} 
+					else
+					{
+						insertNode( index , buffer, node1, node2);
+						insertNode( index2 , buffer2, node2, node1);
+						index->index_array[node1].table = hash_init( index->index_array[node1].table);
+						hash_add_query(hash_num , node2 , &( index->index_array[node1].table));
+
+					}
 
 /*********************************************************************************************************************/
 
